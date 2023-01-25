@@ -1,10 +1,12 @@
 import React from 'react'
 import Image from '../Images/login-img.jpg';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Navbar from '../inc/Navbar';
 
 const Login = () => {
     return(
         <>
+            <Navbar />
             <div className='loginArea mx-auto'>
                 <div className='text-white text-center loginImg' style={{backgroundImage: `url(${Image})`}} ><h1 className='mainH1'>SIGN IN</h1></div>
                 
