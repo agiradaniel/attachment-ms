@@ -37,12 +37,43 @@
 
 .banner{
   height: 200px;
-  opacity: 0.5;
+  /*opacity: 0.5;*/
 }
+
+.notificationbar{
+  background-color: #EBEEF0;
+  width: 25%;
+  height:600px;
+  position:absolute;
+  right: 0px;
+ 
+
+}
+
+.studentname{
+  height:20px;
+  margin-top:50px
+
+}
+/*.studentname h4{
+  margin: 10px 0 0 170px
+}*/
+
+.buttonwrap{
+  margin-top:120px;
+
+}
+
 .mainButton{
   width:150px;
   height:150px;
-  background-color: blue;
   border-radius: 10px;
-  color:white
+  color:white;
+  text-align: center;
+}
+
+.donut{
+  width:300px;
+  height:300px;
+  margin-top:-20px
 }
