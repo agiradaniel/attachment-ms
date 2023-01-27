@@ -10,10 +10,12 @@ const Navbar = () => {
                         <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn-purple-moon'>
                             Navigate
                         </Dropdown.Toggle>
-
                         <Dropdown.Menu>
                         <Link to="/" > <Dropdown.Item href="#/action-1">Login page</Dropdown.Item></Link>
-                        <Link to="/StudentDashboard" ><Dropdown.Item href="#/action-2">Student Dashboard</Dropdown.Item></Link> 
+                        <Link to="/StudentDashboard" ><Dropdown.Item href="#/action-2">Student Dashboard</Dropdown.Item></Link>
+                        <Link to="/ELogbook" ><Dropdown.Item href="#/action-3">E-Logbook</Dropdown.Item></Link>
+                        <Link to="/Report" ><Dropdown.Item href="#/action-4">Report</Dropdown.Item></Link>
+
                         
             
                         </Dropdown.Menu>

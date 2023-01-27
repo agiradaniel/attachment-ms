@@ -37,13 +37,13 @@
 
 .banner{
   height: 200px;
-  /*opacity: 0.5;*/
+  /*opacity: 0.3;*/
 }
 
 .notificationbar{
   background-color: #EBEEF0;
   width: 25%;
-  height:600px;
+  height:90%;
   position:absolute;
   right: 0px;
  
@@ -76,4 +76,17 @@
   width:300px;
   height:300px;
   margin-top:-20px
+}
+
+.logInputs{
+  width:60%;
+  margin:40px 0 0 100px
+}
+
+.reportContainer{
+  width:40%;
+  background-color: #EBEEF0;
+  height:350px;
+  margin-top:155px;
+  border-radius: 10px
 }
