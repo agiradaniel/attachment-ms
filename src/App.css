@@ -9,7 +9,7 @@
   margin-top: 40px;
   background-repeat: no-repeat;
  /* background-image: url('https://mdbootstrap.com/img/new/textures/full/171.jpg');*/
-  height: 250px;
+  height: 230px;
   border-radius: 15px 15px 0 0;
   background-size: cover;
 }
@@ -24,7 +24,7 @@
 }
 .myForm{
   width: 50%;
-  margin-top: 50px
+  margin-top: 30px
 }
 
 .btn-purple-moon {

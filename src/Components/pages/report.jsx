@@ -1,11 +1,27 @@
-import React from 'react';
+import {React, useEffect} from 'react';
 import Navbar from '../inc/Navbar';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../../firebase-config';
+import { useAuthState } from "react-firebase-hooks/auth"
+import SignOut from '../inc/signOut';
 
 const Report = () => {
+    
+    const navigate = useNavigate();
+
+    const [user] = useAuthState(auth);
+
+    useEffect(() => {
+        if(!user){
+          navigate("/");
+        }
+      },[]);
+    
     return(
         <>
             <div style={{backgroundColor:'#4e54c8', height: '100px'}}>
                <Navbar/>
+               <SignOut/>
                <h1 className='text-center text-white' style={{marginTop:'-20px'}}>Report</h1>
             </div>
 

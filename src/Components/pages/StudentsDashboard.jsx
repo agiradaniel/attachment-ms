@@ -1,15 +1,31 @@
-import React from 'react';
+import {React, useEffect} from 'react';
 import Banner from '../Images/dashboard-banner.jpg';
 import Navbar from '../inc/Navbar';
 import Chart from '../inc/chart';
 import Footer from '../inc/footer';
+import { useNavigate } from 'react-router-dom';
+import { auth } from '../../firebase-config';
+import { useAuthState } from "react-firebase-hooks/auth"
+import SignOut from '../inc/signOut';
 
 const StudentDashboard = () => {
+    
+    const navigate = useNavigate();
+
+    const [user] = useAuthState(auth);
+
+    useEffect(() => {
+        if(!user){
+          navigate("/");
+        }
+      },[]);
+    
     return(
         <>
 
             <div className='banner' style={{backgroundImage: `url(${Banner})`}}>
                <Navbar/>
+               <SignOut/>
                <h1 className='text-center text-white' style={{paddingTop:'40px'}}>Student Dashboard</h1>
             </div>
 
@@ -17,7 +33,7 @@ const StudentDashboard = () => {
                 <div className='text-center' style={{marginTop:'190px'}}>
                     <h5>Physical assessment schedule</h5>
                     <p>Not set</p>
-
+                   
                     <h5 style={{marginTop:'50px'}}>Announcements</h5>
                     <p>None yet</p>
                 </div>
