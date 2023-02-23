@@ -27,6 +27,11 @@
   margin-top: 30px
 }
 
+.myFormRegister{
+  width: 50%;
+  margin-top: 20px
+}
+
 .btn-purple-moon {
   background: #4e54c8;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #8f94fb, #4e54c8);  /* Chrome 10-25, Safari 5.1-6 */
@@ -37,17 +42,25 @@
 
 .banner{
   height: 200px;
+  background-repeat: no-repeat;
   /*opacity: 0.3;*/
 }
 
 .notificationbar{
   background-color: #EBEEF0;
   width: 25%;
-  height:90%;
+  height:74%;
   position:absolute;
   right: 0px;
  
 
+}
+.lognotificationbar{
+  background-color: #EBEEF0;
+  width: 25%;
+  height:90%;
+  position:absolute;
+  right: 0px;
 }
 
 .studentname{
@@ -71,6 +84,10 @@
   color:white;
   text-align: center;
 }
+.mainButton:hover{
+  cursor: pointer;
+  transform: scale(1.1);
+}
 
 .donut{
   width:300px;
@@ -89,4 +106,23 @@
   height:350px;
   margin-top:155px;
   border-radius: 10px
+}
+.actionButtons{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+
+}
+.modalStyle{
+  width: 1200px
+}
+
+.studentsContainer{
+  background-color: #EBEEF0;
+  width: 70%;
+  min-height: 400px;
+  border-radius: 15px;
+  text-align: center;
+  color: #5C6560;
+  margin-top:40px
 }

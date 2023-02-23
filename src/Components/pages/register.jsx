@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import Image from '../Images/login-img.jpg';
 import Dropdown from 'react-bootstrap/Dropdown';
-import Navbar from '../inc/Navbar';
 import { Link } from 'react-router-dom';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase-config';
@@ -15,7 +14,9 @@ const Login = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [value, setValue] = useState("Student")
 
+    const user = auth.currentUser;
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
@@ -35,18 +36,18 @@ const Login = () => {
             <div className='loginArea mx-auto'>
                 <div className='text-white text-center loginImg' style={{backgroundImage: `url(${Image})`}} ><h1 className='mainH1'>CREATE ACCOUNT</h1></div>
                 
-                <div className='container myForm'>
+                <div className='container myFormRegister'>
                 <form onSubmit={handleSubmit}>
 
                     <Dropdown>
                         <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn-purple-moon'>
-                            Student
+                            {value}
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                            <Dropdown.Item href="#/action-1">Student</Dropdown.Item>
-                            <Dropdown.Item href="#/action-2">Field supervisor</Dropdown.Item>
-                            <Dropdown.Item href="#/action-3">Academic supervisor</Dropdown.Item>
+                            <Dropdown.Item value="Student" onClick={()=>{setValue("Student")}}>Student</Dropdown.Item>
+                            <Dropdown.Item value="fieldSupervisor" onClick={()=>{setValue("Field Supervisor")}}>Field supervisor</Dropdown.Item>
+                            <Dropdown.Item value="academicSupervisor" onClick={()=>{setValue("Academic Supervisor")}}>Academic supervisor</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                     

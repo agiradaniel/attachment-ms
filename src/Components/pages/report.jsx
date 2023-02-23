@@ -1,9 +1,10 @@
-import {React, useEffect} from 'react';
+import {React, useEffect, useState} from 'react';
 import Navbar from '../inc/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { auth } from '../../firebase-config';
+import { auth, storage } from '../../firebase-config';
 import { useAuthState } from "react-firebase-hooks/auth"
 import SignOut from '../inc/signOut';
+import {ref, uploadBytes} from 'firebase/storage'
 
 const Report = () => {
     
@@ -11,11 +12,27 @@ const Report = () => {
 
     const [user] = useAuthState(auth);
 
-    useEffect(() => {
+    const [fileUpload, setFileUpload] = useState(null)
+    const [successMessage, setSuccessMessage] = useState("")
+
+   /* useEffect(() => {
         if(!user){
           navigate("/");
         }
-      },[]);
+      },[]);*/
+
+     const uploadFile = async(e) => {
+      e.preventDefault();
+      if(!fileUpload) return;
+      const filesFolderRef = ref(storage, `Reports/${fileUpload.name}`)
+      
+      try{
+        await uploadBytes(filesFolderRef, fileUpload);
+        setSuccessMessage(fileUpload.name +" was uploaded successfully");
+      }catch(err){
+        console.error(err)
+      }  
+     } 
     
     return(
         <>
@@ -28,9 +45,16 @@ const Report = () => {
             <div className="reportContainer container text-center">
                 <form>
                 <h2 style={{padding:'60px 0 60px 0'}}>Upload report</h2>
-                <input type="file" className="form-control mx-auto" id="customFile" style={{width:'60%'}}/>
-                <button type="submit" className="btn btn-purple-moon btn-rounded" style={{marginTop:'60px'}}>Upload</button>
+                <input type="file" className="form-control mx-auto" id="customFile" style={{width:'60%'}} 
+                  onChange={(e )=>{
+                    setFileUpload(e.target.files[0])
+                  }}
+                />
+                <button type="submit" className="btn btn-purple-moon btn-rounded" style={{marginTop:'60px'}}
+                  onClick={uploadFile}
+                >Upload</button>
                 </form>
+                <div><p>{successMessage}</p></div>
             </div>
         </>
     )

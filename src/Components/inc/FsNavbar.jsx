@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-const Navbar = () => {
+const FsNavbar = () => {
     return(
         <>
          
@@ -12,10 +12,8 @@ const Navbar = () => {
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                         
-                        <Link to="/StudentDashboard" ><Dropdown.Item href="#/action-2">Student Dashboard</Dropdown.Item></Link>
-                        <Link to="/ELogbook" ><Dropdown.Item href="#/action-3">E-Logbook</Dropdown.Item></Link>
-                        <Link to="/Report" ><Dropdown.Item href="#/action-4">Report</Dropdown.Item></Link>
-
+                        <Link to="/FieldSupervisorDashboard" ><Dropdown.Item href="#/action-2">Dashboard</Dropdown.Item></Link>
+                        <Link to="/next" ><Dropdown.Item href="#/action-3">Next</Dropdown.Item></Link>
                         
             
                         </Dropdown.Menu>
@@ -25,4 +23,4 @@ const Navbar = () => {
     );
 }
 
-export default Navbar;
+export default FsNavbar;
