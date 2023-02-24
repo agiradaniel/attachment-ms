@@ -10,9 +10,18 @@ import Dropdown from 'react-bootstrap/Dropdown';
 function StudentModal(props) {
   const [show, setShow] = useState(false);
 
-  const handleClose = () => {setShow(false)};
+  const handleClose = () => {setShow(false);resetStates()};
   const handleShow = () => setShow(true);
   const activeId = props.studentId;
+  const [punctuality, setPunctuality] = useState(0);
+  const [adherence, setAdherence] = useState(0);
+  const [workmanship, setWorkmanship] = useState(0);
+  const [workOutput, setWorkOutput] = useState(0);
+  const [adaptability, setAdaptability] = useState(0);
+  const [communication, setCommunication] = useState(0);
+  const [reliability, setReliability] = useState(0);
+  const [teamwork, setTeamwork] = useState(0);
+  let marks = parseInt(punctuality) + parseInt(adherence) + parseInt(workmanship) + parseInt(workOutput) + parseInt(adaptability) + parseInt(communication) + parseInt(reliability) + parseInt(teamwork)
 
   const [dropValue, setDropValue] = useState("week1")
   const [stuList, setStuList] = useState([]);
@@ -60,16 +69,18 @@ function StudentModal(props) {
             setStuList(stuList)
            
       })
+      console.log("Data from user details retrieved")
       return () => unsuscribe();
+      
       },[])
 
     
-      const weekCollection = collection(db, dropValue);
+      const weekCollectionData = collection(db, dropValue);
       
      
      useEffect(()=>{
         
-        const data = query(weekCollection, where("creatorId", "==", activeId), limit(1))
+        const data = query(weekCollectionData, where("creatorId", "==", activeId), limit(1))
         const unsuscribe =  onSnapshot(data, (snapshot) => {
             let logged = []
             snapshot.docs.forEach((doc)=>{
@@ -78,14 +89,19 @@ function StudentModal(props) {
             setLogged(logged)
            
       })
+      console.log("Data from week collection retrieved")
       return () => unsuscribe();
-      },[])
+      
+      },[dropValue])
 
-
+      //this is to reset assigned marks back to 0
+      const resetStates = () =>{
+        setPunctuality(0);setAdherence(0);setWorkmanship(0);setWorkOutput(0);setAdaptability(0);setCommunication(0);setReliability(0);setTeamwork(0);
+      }
   return (
     
     <>
-      <Button onClick={handleShow} className='btn btn-purple-moon btn-rounded' style={{marginLeft:"30px",fontSize: "10px"}}>
+      <Button onClick={handleShow} className='btn btn-purple-moon btn-rounded' style={{marginLeft:"30px",fontSize: "12px"}}>
         View Student
       </Button>
 
@@ -97,13 +113,17 @@ function StudentModal(props) {
 
         {stuList.map((stu) => {
                 return(
-                    <div>
-                        <p>{stu.name}</p>
+                    <div style={{textAlign:"center", marginTop:"20px", background: "#4e54c8", color: "white", width:"50%", padding:"15px", borderRadius:"15px"}} className="mx-auto">
+                       
+                        <h4>Student Name: {stu.name}</h4>
+                        <h4>Adm No: {stu.admNo}</h4>
+
                     </div>
                 ) 
             })
         }
-
+    <div className='logBookArea mx-auto' style={{width:"70%", marginTop:"20px"}}>
+      <h3 style={{textAlign:"center"}}>Student Logbook</h3>
         <Dropdown style={{textAlign: "center", marginTop:40}}>
                         <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn-purple-moon'>
                             {dropValue}
@@ -131,27 +151,27 @@ function StudentModal(props) {
         <Form style={{marginTop:40}}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Monday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.monday || ""}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.monday || ""}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Tuesday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.tuesday || ""}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.tuesday || ""}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Wednesday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.wednesday || ""}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.wednesday || ""}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Thursday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.thursday || ""}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.thursday || ""}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Friday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.friday || ""}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.friday || ""}
                         />
                     </Form.Group>
 
@@ -165,6 +185,209 @@ function StudentModal(props) {
          ) 
         })
     }
+  </div>
+
+  <div style={{marginTop:"40px", width:"70%"}} className="mx-auto">
+    <h4 style={{textAlign:"center"}}>Field supervior comments for {dropValue}</h4>
+    <Form style={{marginTop:"40px"}} className="text-center">
+        <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Control as="textarea" placeholder="Input comments here" rows={4}/>
+         </Form.Group>
+         <Button type="submit" className="btn btn-purple-moon btn-rounded" >
+            Save Comment
+          </Button>
+    </Form>
+  </div>
+
+  <div style={{marginTop:"40px", width:"70%", border:"1px solid grey", padding:"40px 100px 40px 100px", borderRadius:"15px"}} className="mx-auto">
+    <h4 style={{textAlign:"center"}}>Assessment sheet</h4>
+    
+    <Form>
+      <div className='d-flex justify-content-between' style={{marginTop:"40px"}}>
+        <div><label>Punctuality</label></div>
+         <div>
+          <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={1} onChange={(e)=>setPunctuality(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">1</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value={2} onChange={(e)=>setPunctuality(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio2">2</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value={3} onChange={(e)=>setPunctuality(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio3">3</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value={4} onChange={(e)=>setPunctuality(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+        </div>   
+      </div>   
+
+      <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
+          <div><label>Adherence to regulations</label></div>
+          <div>
+            <div className="form-check form-check-inline">
+                <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={1} onChange={(e)=>setAdherence(e.target.value)} />
+                <label className="form-check-label" for="inlineRadio1">1</label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={2} onChange={(e)=>setAdherence(e.target.value)}  />
+              <label className="form-check-label" for="inlineRadio2">2</label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={3} onChange={(e)=>setAdherence(e.target.value)}  />
+              <label className="form-check-label" for="inlineRadio3">3</label>
+            </div>
+            <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={4} onChange={(e)=>setAdherence(e.target.value)}  />
+              <label className="form-check-label" for="inlineRadio4">4</label>
+            </div>
+          </div>   
+      </div>  
+
+      <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
+        <div><label style={{marginRight:"15px"}}>Workmanship</label></div>
+         <div>
+          <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={1} onChange={(e)=>setWorkmanship(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">1</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={2} onChange={(e)=>setWorkmanship(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio2">2</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={3} onChange={(e)=>setWorkmanship(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio3">3</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={4} onChange={(e)=>setWorkmanship(e.target.value)} disabled/>
+            <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+        </div>  
+      </div>  
+
+      <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
+        <div><label style={{marginRight:"15px"}}>Work Output</label></div>
+        <div>  
+          <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={1} onChange={(e)=>setWorkOutput(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">1</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={2} onChange={(e)=>setWorkOutput(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio2">2</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={3} onChange={(e)=>setWorkOutput(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio3">3</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={4} onChange={(e)=>setWorkOutput(e.target.value)} disabled/>
+            <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+        </div>
+      </div>  
+
+      <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
+        <div><label style={{marginRight:"15px"}}>Adaptability</label></div>
+         <div> 
+          <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={1} onChange={(e)=>setAdaptability(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">1</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={2} onChange={(e)=>setAdaptability(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio2">2</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={3} onChange={(e)=>setAdaptability(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio3">3</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={4} onChange={(e)=>setAdaptability(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+        </div> 
+      </div>  
+
+      <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
+        <div><label style={{marginRight:"15px"}}>Communication</label></div>
+        <div> 
+          <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={1} onChange={(e)=>setCommunication(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">1</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={2} onChange={(e)=>setCommunication(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio2">2</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={3} onChange={(e)=>setCommunication(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio3">3</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={4} onChange={(e)=>setCommunication(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+        </div>   
+      </div>  
+
+      <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
+        <div><label style={{marginRight:"15px"}}>Reliability</label></div>
+         <div>
+          <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={1} onChange={(e)=>setReliability(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">1</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={2} onChange={(e)=>setReliability(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio2">2</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={3} onChange={(e)=>setReliability(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio3">3</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={4} onChange={(e)=>setReliability(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+        </div>  
+      </div>  
+
+      <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
+        <div><label style={{marginRight:"15px"}}>Teamwork</label></div>
+        <div> 
+          <div className="form-check form-check-inline">
+              <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={1} onChange={(e)=>setTeamwork(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">1</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={2} onChange={(e)=>setTeamwork(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio2">2</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={3} onChange={(e)=>setTeamwork(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio3">3</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={4} onChange={(e)=>setTeamwork(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+        </div>   
+      </div>  
+
+      <div className='text-center' style={{marginTop:"20px"}}>
+        <p>Assigned Marks: {marks}</p>
+        <Button className="btn btn-purple-moon btn-rounded">
+              Submit Marks
+        </Button>
+      </div>   
+    </Form>
+    
+  </div>
 
         </Modal.Body>
         <Modal.Footer>

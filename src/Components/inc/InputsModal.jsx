@@ -90,7 +90,7 @@ const weekCollection = collection(db, dropValue);
         <Form style={{marginTop:40}}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Monday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={mondayLog}
+                        <Form.Control as="textarea" placeholder="Description of work done"  rows={1} value={mondayLog}
                             onChange={(e)=>{
                                 setMondayLog(e.target.value)
                             }}
@@ -98,7 +98,7 @@ const weekCollection = collection(db, dropValue);
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Tuesday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={tuesdayLog}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={tuesdayLog}
                             onChange={(e)=>{
                                 setTuesdayLog(e.target.value)
                             }}
@@ -106,7 +106,7 @@ const weekCollection = collection(db, dropValue);
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Wednesday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={wednesdayLog}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={wednesdayLog}
                             onChange={(e)=>{
                                 setWednesdayLog(e.target.value)
                             }}
@@ -114,7 +114,7 @@ const weekCollection = collection(db, dropValue);
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Thursday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={thursdayLog}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={thursdayLog}
                             onChange={(e)=>{
                                 setThursdayLog(e.target.value)
                             }}
@@ -122,7 +122,7 @@ const weekCollection = collection(db, dropValue);
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Friday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={fridayLog}
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={fridayLog}
                             onChange={(e)=>{
                                 setFridayLog(e.target.value)
                             }}

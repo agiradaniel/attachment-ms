@@ -30,7 +30,9 @@ const FieldSupervisorDashboard = () => {
             setStuList(stuList)
            
       })
+      console.log("Data from user details retrieved");
       return () => unsuscribe();
+     
       },[])
   
     return (

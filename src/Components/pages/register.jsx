@@ -15,17 +15,27 @@ const Login = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [value, setValue] = useState("Student")
+    const [firebaseError, setFirebaseError] = useState("")
 
-    const user = auth.currentUser;
 
     const handleSubmit = async (e) =>{
         e.preventDefault();
-        if(newPassword === confirmPassword){
-            await createUserWithEmailAndPassword(auth, newEmail, newPassword);
-            navigate("/");
-           }else{
-             setErrorMessage("Passwords dont match")
-        }
+        try{
+            if(newPassword === confirmPassword){
+                await createUserWithEmailAndPassword(auth, newEmail, newPassword);
+                if(value === "Student"){
+                    navigate("/");
+                }else if(value === "Field Supervisor"){
+                    navigate("/FieldSupervisorLogin");
+                }else{
+                    navigate("/AcademicSupervisorLogin");
+                }
+            }else{
+                setErrorMessage("Passwords dont match")
+            }
+        }catch(err){
+            setFirebaseError(err.message)
+        }    
     }
 
 
@@ -73,6 +83,7 @@ const Login = () => {
                     </div>
 
                     <div><p>{errorMessage}</p></div>
+                    <div><p>{firebaseError}</p></div>
                    
                     <button type="submit" className="btn btn-purple-moon btn-rounded" style={{marginTop:20}} >Create Account</button>
 

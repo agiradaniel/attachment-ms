@@ -17,7 +17,7 @@
 
   background-color: #EBEEF0;
   width: 70%;
-  height: 700px;
+  min-height: 700px;
   border-radius: 15px
   
 
@@ -125,4 +125,7 @@
   text-align: center;
   color: #5C6560;
   margin-top:40px
+}
+.btn-close{
+  background-color: white;
 }

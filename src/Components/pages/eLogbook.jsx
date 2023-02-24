@@ -45,6 +45,7 @@ const ELogbook = () => {
             setLogged(logged)
            
       })
+      console.log("Data retrieved from weekCollection")
       return () => unsuscribe();
       },[weekCollection])
 
@@ -116,23 +117,23 @@ const ELogbook = () => {
                     <Form style={{marginTop:40}}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Monday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.monday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.monday || ""}/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Tuesday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.tuesday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.tuesday || ""}/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Wednesday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.wednesday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.wednesday || ""}/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Thursday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.thursday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.thursday || ""}/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Friday</Form.Label>
-                        <Form.Control type="text" placeholder="Description of work done" value={log.friday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.friday || ""}/>
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
