@@ -129,3 +129,6 @@
 .btn-close{
   background-color: white;
 }
+.disabledButton:hover{
+  cursor: not-allowed;
+}

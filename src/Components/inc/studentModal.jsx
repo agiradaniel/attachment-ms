@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { db } from '../../firebase-config';
-import {addDoc, collection, query, where, onSnapshot, limit} from 'firebase/firestore';
+import {addDoc, collection, query, where, onSnapshot, limit, updateDoc, doc} from 'firebase/firestore';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 
@@ -22,9 +22,12 @@ function StudentModal(props) {
   const [reliability, setReliability] = useState(0);
   const [teamwork, setTeamwork] = useState(0);
   let marks = parseInt(punctuality) + parseInt(adherence) + parseInt(workmanship) + parseInt(workOutput) + parseInt(adaptability) + parseInt(communication) + parseInt(reliability) + parseInt(teamwork)
+  let name = "";
 
   const [dropValue, setDropValue] = useState("week1")
   const [stuList, setStuList] = useState([]);
+  const [supervisorComments, setSupervisorComments] = useState("");
+
 
     //States for weekly data
     /*const [mondayLog, setMondayLog] = useState("");
@@ -34,30 +37,43 @@ function StudentModal(props) {
     const [fridayLog, setFridayLog] = useState("");
     const [reportLog, setReportLog] = useState("");*/
     const [logged, setLogged] = useState([]);
+    const [stuMarks, setStuMarks] = useState([]);
 
-//code to input data to the database
-    /*const weekCollection = collection(db, dropValue);
+//code to input marks data to the database
+      const marksCollection = collection(db, "student-marks");
 
-      const submitLog = async(e) => {
-        e.preventDefault();
-        await addDoc(weekCollection, {
-            monday: mondayLog, 
-            tuesday: tuesdayLog,
-            wednesday: wednesdayLog,
-            thursday: thursdayLog,
-            friday: fridayLog,
-            report: reportLog,
-            creatorId: user.uid
+      const submitMarks = async(e) => {
+        //e.preventDefault();
+        await addDoc(marksCollection, {
+            studentName: name,
+            punctuality: punctuality, 
+            aherence: adherence,
+            workmanship: workmanship,
+            workOutput: workOutput,
+            adaptability: adaptability,
+            communication: communication,
+            reliability: reliability,
+            teamwork: teamwork,
+            totalMarks: marks,
+            studentId: activeId
         })
-      }*/
+      }
+
+      //code to input supervisor comments data to the database
+      const updateSupervisorComments = async (id) => {
+        //in update you reference a specific doc not the whole collection
+        
+        const userDoc = doc(db, dropValue, id);
+        await updateDoc(userDoc, { fieldSupervisorComments: supervisorComments})
+      }
 
  //this code clears the states to empty the input values
- /*const clearStateValues = () =>{
-    setMondayLog(""); setTuesdayLog(""); setWednesdayLog(""); setThursdayLog(""); setFridayLog(""); 
-  }*/
+ const clearState = () =>{
+    setSupervisorComments("")
+  }
 
   const students = collection(db, "user-details");
-
+    //this code queries student details ie name number location
     useEffect(()=>{
         
         const data = query(students, where("creatorId", "==", activeId));
@@ -75,9 +91,9 @@ function StudentModal(props) {
       },[])
 
     
-      const weekCollectionData = collection(db, dropValue);
+    const weekCollectionData = collection(db, dropValue);
       
-     
+     //this code queries logbook details for a specific student
      useEffect(()=>{
         
         const data = query(weekCollectionData, where("creatorId", "==", activeId), limit(1))
@@ -86,7 +102,8 @@ function StudentModal(props) {
             snapshot.docs.forEach((doc)=>{
                logged.push({...doc.data(), id: doc.id})
             })
-            setLogged(logged)
+            setLogged(logged);
+            
            
       })
       console.log("Data from week collection retrieved")
@@ -94,9 +111,27 @@ function StudentModal(props) {
       
       },[dropValue])
 
-      //this is to reset assigned marks back to 0
+      const marksDataCollection = collection(db, "student-marks");
+      //this code is to query marks data
+      useEffect(()=>{
+        
+        const data = query(marksDataCollection, where("studentId", "==", activeId), limit(1))
+        const unsuscribe =  onSnapshot(data, (snapshot) => {
+            let stuMarks = []
+            snapshot.docs.forEach((doc)=>{
+               stuMarks.push({...doc.data(), id: doc.id})
+            })
+            setStuMarks(stuMarks)
+           
+      })
+      console.log("Data from marks collection retrieved")
+      return () => unsuscribe();
+      
+      },[])
+
+      //this is to reset assigned marks back to 0 it is called with the handleclose function
       const resetStates = () =>{
-        setPunctuality(0);setAdherence(0);setWorkmanship(0);setWorkOutput(0);setAdaptability(0);setCommunication(0);setReliability(0);setTeamwork(0);
+        setPunctuality(0);setAdherence(0);setWorkmanship(0);setWorkOutput(0);setAdaptability(0);setCommunication(0);setReliability(0);setTeamwork(0);setSupervisorComments(""); name="";
       }
   return (
     
@@ -112,12 +147,12 @@ function StudentModal(props) {
         <Modal.Body>
 
         {stuList.map((stu) => {
-                return(
+               return(
                     <div style={{textAlign:"center", marginTop:"20px", background: "#4e54c8", color: "white", width:"50%", padding:"15px", borderRadius:"15px"}} className="mx-auto">
                        
                         <h4>Student Name: {stu.name}</h4>
                         <h4>Adm No: {stu.admNo}</h4>
-
+                        <div style={{display:"none"}}> {name = stu.name} </div>
                     </div>
                 ) 
             })
@@ -130,16 +165,16 @@ function StudentModal(props) {
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                            <Dropdown.Item value="week1" onClick={()=>{setDropValue("week1")}}>Week 1</Dropdown.Item>
-                            <Dropdown.Item value="week2" onClick={()=>{setDropValue("week2")}}>Week 2</Dropdown.Item>
-                            <Dropdown.Item value="week3" onClick={()=>{setDropValue("week3")}}>Week 3</Dropdown.Item>
-                            <Dropdown.Item value="week4" onClick={()=>{setDropValue("week4")}}>Week 4</Dropdown.Item>
-                            <Dropdown.Item value="week5" onClick={()=>{setDropValue("week5")}}>Week 5</Dropdown.Item>
-                            <Dropdown.Item value="week6" onClick={()=>{setDropValue("week6")}}>Week 6</Dropdown.Item>
-                            <Dropdown.Item value="week7" onClick={()=>{setDropValue("week7")}}>Week 7</Dropdown.Item>
-                            <Dropdown.Item value="week8" onClick={()=>{setDropValue("week8")}}>Week 8</Dropdown.Item>
-                            <Dropdown.Item value="week9" onClick={()=>{setDropValue("week9")}}>Week 9</Dropdown.Item>
-                            <Dropdown.Item value="week10" onClick={()=>{setDropValue("week10")}}>Week 10</Dropdown.Item>
+                            <Dropdown.Item value="week1" onClick={()=>{setDropValue("week1"); clearState()}}>Week 1</Dropdown.Item>
+                            <Dropdown.Item value="week2" onClick={()=>{setDropValue("week2"); clearState()}}>Week 2</Dropdown.Item>
+                            <Dropdown.Item value="week3" onClick={()=>{setDropValue("week3"); clearState()}}>Week 3</Dropdown.Item>
+                            <Dropdown.Item value="week4" onClick={()=>{setDropValue("week4"); clearState()}}>Week 4</Dropdown.Item>
+                            <Dropdown.Item value="week5" onClick={()=>{setDropValue("week5"); clearState()}}>Week 5</Dropdown.Item>
+                            <Dropdown.Item value="week6" onClick={()=>{setDropValue("week6"); clearState()}}>Week 6</Dropdown.Item>
+                            <Dropdown.Item value="week7" onClick={()=>{setDropValue("week7"); clearState()}}>Week 7</Dropdown.Item>
+                            <Dropdown.Item value="week8" onClick={()=>{setDropValue("week8"); clearState()}}>Week 8</Dropdown.Item>
+                            <Dropdown.Item value="week9" onClick={()=>{setDropValue("week9"); clearState()}}>Week 9</Dropdown.Item>
+                            <Dropdown.Item value="week10" onClick={()=>{setDropValue("week10"); clearState()}}>Week 10</Dropdown.Item>
                             
                             
                         </Dropdown.Menu>
@@ -147,7 +182,7 @@ function StudentModal(props) {
 
     {logged.map((log) => {
         return(      
-
+        <>
         <Form style={{marginTop:40}}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Monday</Form.Label>
@@ -180,23 +215,27 @@ function StudentModal(props) {
                         <Form.Control as="textarea" placeholder="Text area" rows={3} value={log.report || ""}
                         />
                     </Form.Group>
+                    
+                    <h4 style={{textAlign:"center",margin:"50px 0 40px"}}>Field supervior comments for {dropValue}</h4>
+    
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Control as="textarea" placeholder="Input comments here" rows={4} value={log.fieldSupervisorComments || supervisorComments}
+                          onChange={(e)=>{setSupervisorComments(e.target.value)}}
+                        />
+                    </Form.Group>
+                    <div className='text-center'><Button className="btn btn-purple-moon btn-rounded" onClick={()=>updateSupervisorComments(log.id)}>
+                        Save Comment
+                      </Button></div>
 
                 </Form>
+                </>
          ) 
         })
     }
   </div>
 
   <div style={{marginTop:"40px", width:"70%"}} className="mx-auto">
-    <h4 style={{textAlign:"center"}}>Field supervior comments for {dropValue}</h4>
-    <Form style={{marginTop:"40px"}} className="text-center">
-        <Form.Group className="mb-3" controlId="formBasicEmail">
-            <Form.Control as="textarea" placeholder="Input comments here" rows={4}/>
-         </Form.Group>
-         <Button type="submit" className="btn btn-purple-moon btn-rounded" >
-            Save Comment
-          </Button>
-    </Form>
+    
   </div>
 
   <div style={{marginTop:"40px", width:"70%", border:"1px solid grey", padding:"40px 100px 40px 100px", borderRadius:"15px"}} className="mx-auto">
@@ -378,13 +417,32 @@ function StudentModal(props) {
           </div>
         </div>   
       </div>  
+  
 
-      <div className='text-center' style={{marginTop:"20px"}}>
-        <p>Assigned Marks: {marks}</p>
-        <Button className="btn btn-purple-moon btn-rounded">
-              Submit Marks
-        </Button>
-      </div>   
+      {(stuMarks != "") ? (stuMarks.map((mks) => {
+            
+               return(
+                 <> 
+                 
+                  <div className='text-center' style={{marginTop:"20px"}}>
+                      <p>Submitted Marks: {mks.totalMarks}</p>
+                     <a className='disabledButton'><Button className="btn btn-purple-moon btn-rounded" onClick={submitMarks} disabled>
+                        Submitted
+                      </Button></a>
+                  </div>
+                  
+                </>   
+                ) 
+              })
+              ):(
+                <div className='text-center' style={{marginTop:"20px"}}>
+                  <p>Assigned Marks: {marks}</p>
+                 <Button className="btn btn-purple-moon btn-rounded" onClick={submitMarks}>
+                  Submit Marks
+                </Button>
+             </div> 
+      )}
+
     </Form>
     
   </div>
@@ -394,7 +452,7 @@ function StudentModal(props) {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button type="submit" className="btn btn-purple-moon btn-rounded" >
+          <Button type="submit" className="btn btn-purple-moon btn-rounded">
             Save Changes
           </Button>
         </Modal.Footer>
