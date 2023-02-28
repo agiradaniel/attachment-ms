@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from '../../firebase-config';
+import { auth, db} from '../../firebase-config';
 import { updateProfile } from 'firebase/auth';
+import { addDoc, collection } from 'firebase/firestore';
 
 function SettingsModal() {
   const [show, setShow] = useState(false);
@@ -12,7 +13,11 @@ function SettingsModal() {
   const handleShow = () => setShow(true);
 
   const [user] = useAuthState(auth);
-const [updatedDisplayName, setUpdatedDisplayName] = useState("")
+const [updatedDisplayName, setUpdatedDisplayName] = useState("");
+const [admNo, setAdmNo] = useState("");
+const [location, setLocation] = useState("");
+const [phone, setPhone] = useState("");
+
 
 
 const updateName = async () => {
@@ -20,6 +25,20 @@ const updateName = async () => {
     displayName: updatedDisplayName,
   });
 };
+
+const userCollection = collection(db, "user-details");
+
+      const updateDetails = async() => {
+        
+        await addDoc(userCollection, {
+            name: updatedDisplayName,
+            admNo: admNo,
+            location: location,
+            phone: phone,
+            role: "student",
+            creatorId: user.uid
+        })
+      }
 
 useEffect(()=>{
     console.log(user);
@@ -30,8 +49,8 @@ useEffect(()=>{
   return (
     
     <>
-      <Button onClick={handleShow} className='btn btn-purple-moon btn-rounded' style={{position:"absolute",right: "100px", top:"0"}}>
-        Settings
+      <Button onClick={handleShow} className='btn btn-purple-moon btn-rounded'>
+        Update Details
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -46,8 +65,33 @@ useEffect(()=>{
                         type="text"
                         value={updatedDisplayName}
                         onChange={(event) => setUpdatedDisplayName(event.target.value)}
-                        style={{marginTop: "20px"}}
+                        style={{margin: "10px 0 10px"}}
                      />
+                     <br/>
+                     <label> Adm No </label>
+                    <br/>
+                    <input
+                        type="text"
+                        onChange={(event) => setAdmNo(event.target.value)}
+                        style={{margin: "10px 0 10px"}}
+                     />
+                      <br/>
+                     <label> Location </label>
+                    <br/>
+                    <input
+                        type="text"
+                        onChange={(event) => setLocation(event.target.value)}
+                        style={{margin: "10px 0 10px"}}
+                     />
+                      <br/>
+                     <label> Phone </label>
+                    <br/>
+                    <input
+                        type="text"
+                        onChange={(event) => setPhone(event.target.value)}
+                        style={{margin: "10px 0 10px"}}
+                     />
+
                    
                     
         </div>
@@ -56,7 +100,7 @@ useEffect(()=>{
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button onClick={()=>{handleClose(); updateName()}} className="btn btn-purple-moon btn-rounded">
+          <Button onClick={()=>{handleClose(); updateName(); updateDetails()}} className="btn btn-purple-moon btn-rounded">
             Save Changes
           </Button>
         </Modal.Footer>

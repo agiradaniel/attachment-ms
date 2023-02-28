@@ -9,6 +9,7 @@ import FieldSupervisorLogin from './Components/pages/fieldSupervisorLogin';
 import FieldSupervisorDashboard from './Components/pages/fieldSupervisorDashboard';
 import AcademicSupervisorLogin from './Components/pages/academicSupervisorLogin';
 import AcademicSupervisorDashboard from './Components/pages/academicSupervisorDashboard';
+import MapContainer from './Components/inc/map'
 
 
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -32,6 +33,7 @@ function App() {
           <Route path="/AcademicSupervisorLogin" element={<AcademicSupervisorLogin/>}/>
           <Route path="/FieldSupervisorDashboard" element={<FieldSupervisorDashboard/>}/>
           <Route path="AcademicSupervisorDashboard" element={<AcademicSupervisorDashboard/>}/>
+          <Route path="maps" element={<MapContainer/>}/>
           
           
           </Routes> 

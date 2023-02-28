@@ -7,27 +7,27 @@ import {addDoc, collection, query, where, onSnapshot, limit, updateDoc, doc} fro
 import Dropdown from 'react-bootstrap/Dropdown';
 
 
-function StudentModal(props) {
+function StudentModalAS(props) {
   const [show, setShow] = useState(false);
 
   const handleClose = () => {setShow(false);resetStates()};
   const handleShow = () => setShow(true);
   const activeId = props.studentId;
-  const [punctuality, setPunctuality] = useState(0);
   const [adherence, setAdherence] = useState(0);
-  const [workmanship, setWorkmanship] = useState(0);
-  const [workOutput, setWorkOutput] = useState(0);
-  const [adaptability, setAdaptability] = useState(0);
-  const [communication, setCommunication] = useState(0);
-  const [reliability, setReliability] = useState(0);
-  const [teamwork, setTeamwork] = useState(0);
-  let marks = parseInt(punctuality) + parseInt(adherence) + parseInt(workmanship) + parseInt(workOutput) + parseInt(adaptability) + parseInt(communication) + parseInt(reliability) + parseInt(teamwork)
+  const [presentation, setPresentation] = useState(0);
+  const [evidence, setEvidence] = useState(0);
+  const [organizational, setOrganizational] = useState(0);
+  const [mandate, setMandate] = useState(0);
+  const [general, setGeneral] = useState(0);
+  const [activity, setActivity] = useState(0);
+  const [penalty, setPenalty]  = useState(0);
+  let marks = parseInt(adherence) + parseInt(presentation) + parseInt(evidence) + parseInt(organizational) + parseInt(mandate) + parseInt(general) + parseInt(activity) + parseInt(penalty)
   let name = "";
 
   const [dropValue, setDropValue] = useState("week1")
   const [stuList, setStuList] = useState([]);
-  const [supervisorComments, setSupervisorComments] = useState("");
   const [displaySettings, setDisplaySettings]  = useState("none");
+  const [assessmentDate, setAssessmentDate] = useState("");
 
 
     //States for weekly data
@@ -41,20 +41,20 @@ function StudentModal(props) {
     const [stuMarks, setStuMarks] = useState([]);
 
 //code to input marks data to the database
-      const marksCollection = collection(db, "student-marks");
+      const marksCollection = collection(db, "student-marksas");
 
       const submitMarks = async(e) => {
         //e.preventDefault();
         await addDoc(marksCollection, {
             studentName: name,
-            punctuality: punctuality, 
-            aherence: adherence,
-            workmanship: workmanship,
-            workOutput: workOutput,
-            adaptability: adaptability,
-            communication: communication,
-            reliability: reliability,
-            teamwork: teamwork,
+            adherence: adherence,
+            presentation: presentation,
+            evidence: evidence,
+            organizational: organizational,
+            mandate: mandate,
+            general: general,
+            activity: activity,
+            penalty: penalty,
             totalMarks: marks,
             studentId: activeId
         })
@@ -63,22 +63,17 @@ function StudentModal(props) {
       const submitApproval = async (id) => {
         //in update you reference a specific doc not the whole collection
         
-        const approveDoc = doc(db, dropValue, id);
+        const approveDoc = doc(db, "user-details", id);
         await updateDoc(approveDoc, { approvalStatus: true})
       }
 
-      //code to input supervisor comments data to the database
-      const updateSupervisorComments = async (id) => {
+      const submitAssesmentDate = async (id) => {
         //in update you reference a specific doc not the whole collection
         
-        const userDoc = doc(db, dropValue, id);
-        await updateDoc(userDoc, { fieldSupervisorComments: supervisorComments})
+        const assessmentDoc = doc(db, "user-details", id);
+        await updateDoc(assessmentDoc, { assessmentDate: assessmentDate})
       }
 
- //this code clears the states to empty the input values
- const clearState = () =>{
-    setSupervisorComments("")
-  }
 
   const students = collection(db, "user-details");
     //this code queries student details ie name number location
@@ -119,7 +114,7 @@ function StudentModal(props) {
       
       },[dropValue])
 
-      const marksDataCollection = collection(db, "student-marks");
+      const marksDataCollection = collection(db, "student-marksas");
       //this code is to query marks data
       useEffect(()=>{
         
@@ -139,7 +134,7 @@ function StudentModal(props) {
 
       //this is to reset assigned marks back to 0 it is called with the handleclose function
       const resetStates = () =>{
-        setPunctuality(0);setAdherence(0);setWorkmanship(0);setWorkOutput(0);setAdaptability(0);setCommunication(0);setReliability(0);setTeamwork(0);setSupervisorComments(""); name="";
+        setAdherence(0);setPresentation(0);setEvidence(0);setOrganizational(0);setMandate(0);setGeneral(0);setActivity(0); name="";
       }
   return (
     
@@ -154,8 +149,21 @@ function StudentModal(props) {
         </Modal.Header>
         <Modal.Body>
 
+
         {stuList.map((stu) => {
                return(
+                <>
+                     
+                {!stu.approvalStatus ? 
+            
+                 (<div className='d-flex' style={{position:"absolute", right:"10px", top:"80px", border:"1px solid green", borderRadius:"8px",fontSize:"14px", fontWeight:"bold", height:"40px"}}>
+                    <div style={{padding:"8px 2px 5px 10px"}}>Attachment status</div> <div style={{backgroundColor:"green",padding:"8px 10px 5px 5px", borderRadius:"0 8px 8px 0", color:"white"}}> Ongoing</div>
+                 </div>
+                ) : (<div className='d-flex' style={{position:"absolute", right:"10px", top:"80px", border:"1px solid red", borderRadius:"8px",fontSize:"14px", fontWeight:"bold", height:"40px"}}>
+                 <div style={{padding:"8px 2px 5px 10px"}}>Attachment status</div> <div style={{backgroundColor:"red",padding:"8px 10px 5px 5px", borderRadius:"0 8px 8px 0", color:"white"}}> Terminated</div>
+                </div>)
+                }
+
                     <div style={{textAlign:"center", marginTop:"20px", background: "#4e54c8", color: "white", width:"50%", padding:"15px", borderRadius:"15px"}} className="mx-auto">
                        
                         <h4>Student Name: {stu.name}</h4>
@@ -171,9 +179,32 @@ function StudentModal(props) {
                           
                           }>More details</a>
                     </div>
+                    {!stu.assessmentDate ?
+                    (<div style={{textAlign:"center", marginTop:"20px", background: "#4e54c8", color: "white", width:"50%", padding:"15px", borderRadius:"15px"}} className="mx-auto">
+                       
+                       <h5>Set assessment date</h5>
+                        <input type="date" style={{borderRadius:"8px", padding:"5px", backgroundColor:"#BBB2AC", color:"white", fontWeight:"bold"}}
+                          onChange={(e)=>{
+                            setAssessmentDate(e.target.value);
+                            submitAssesmentDate(stu.id);
+                          }}
+                        />
+                    </div>):(
+                      <div style={{textAlign:"center", marginTop:"20px", background: "#4e54c8", color: "white", width:"50%", padding:"15px", borderRadius:"15px"}} className="mx-auto">
+                       
+                      <h5>Assessment date set to: {stu.assessmentDate}</h5>
+          
+                   </div>
+                    )
+                   }
+                </>
                 ) 
+             
             })
         }
+
+    
+
     <div className='logBookArea mx-auto' style={{width:"70%", marginTop:"20px"}}>
       <h3 style={{textAlign:"center"}}>Student Logbook</h3>
         <Dropdown style={{textAlign: "center", marginTop:40}}>
@@ -182,16 +213,16 @@ function StudentModal(props) {
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                            <Dropdown.Item value="week1" onClick={()=>{setDropValue("week1"); clearState()}}>Week 1</Dropdown.Item>
-                            <Dropdown.Item value="week2" onClick={()=>{setDropValue("week2"); clearState()}}>Week 2</Dropdown.Item>
-                            <Dropdown.Item value="week3" onClick={()=>{setDropValue("week3"); clearState()}}>Week 3</Dropdown.Item>
-                            <Dropdown.Item value="week4" onClick={()=>{setDropValue("week4"); clearState()}}>Week 4</Dropdown.Item>
-                            <Dropdown.Item value="week5" onClick={()=>{setDropValue("week5"); clearState()}}>Week 5</Dropdown.Item>
-                            <Dropdown.Item value="week6" onClick={()=>{setDropValue("week6"); clearState()}}>Week 6</Dropdown.Item>
-                            <Dropdown.Item value="week7" onClick={()=>{setDropValue("week7"); clearState()}}>Week 7</Dropdown.Item>
-                            <Dropdown.Item value="week8" onClick={()=>{setDropValue("week8"); clearState()}}>Week 8</Dropdown.Item>
-                            <Dropdown.Item value="week9" onClick={()=>{setDropValue("week9"); clearState()}}>Week 9</Dropdown.Item>
-                            <Dropdown.Item value="week10" onClick={()=>{setDropValue("week10"); clearState()}}>Week 10</Dropdown.Item>
+                            <Dropdown.Item value="week1" onClick={()=>{setDropValue("week1")}}>Week 1</Dropdown.Item>
+                            <Dropdown.Item value="week2" onClick={()=>{setDropValue("week2")}}>Week 2</Dropdown.Item>
+                            <Dropdown.Item value="week3" onClick={()=>{setDropValue("week3")}}>Week 3</Dropdown.Item>
+                            <Dropdown.Item value="week4" onClick={()=>{setDropValue("week4")}}>Week 4</Dropdown.Item>
+                            <Dropdown.Item value="week5" onClick={()=>{setDropValue("week5")}}>Week 5</Dropdown.Item>
+                            <Dropdown.Item value="week6" onClick={()=>{setDropValue("week6")}}>Week 6</Dropdown.Item>
+                            <Dropdown.Item value="week7" onClick={()=>{setDropValue("week7")}}>Week 7</Dropdown.Item>
+                            <Dropdown.Item value="week8" onClick={()=>{setDropValue("week8")}}>Week 8</Dropdown.Item>
+                            <Dropdown.Item value="week9" onClick={()=>{setDropValue("week9")}}>Week 9</Dropdown.Item>
+                            <Dropdown.Item value="week10" onClick={()=>{setDropValue("week10")}}>Week 10</Dropdown.Item>
                             
                             
                         </Dropdown.Menu>
@@ -229,25 +260,20 @@ function StudentModal(props) {
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Student weekly report</Form.Label>
-                        <Form.Control as="textarea" placeholder="Text area" rows={3} value={log.report || ""} readOnly
+                        <Form.Control as="textarea" placeholder="Not logged yet" rows={3} value={log.report || ""} readOnly
                         />
                     </Form.Group>
                     
-                    <h4 style={{textAlign:"center",margin:"50px 0 40px"}}>Field supervior comments for {dropValue}</h4>
     
                     <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Control as="textarea" placeholder="Input comments here" rows={4} value={log.fieldSupervisorComments || supervisorComments}
-                          onChange={(e)=>{setSupervisorComments(e.target.value)}}
+                    <Form.Label>Field Supervisor comments</Form.Label>
+                        <Form.Control as="textarea" placeholder="Comments not made yet" rows={4} value={log.fieldSupervisorComments || ""} readOnly
                         />
                     </Form.Group>
                     <div className='d-flex justify-content-center'>
-                    {!log.fieldSupervisorComments ? (<div className='text-center'><Button className="btn btn-purple-moon btn-rounded" onClick={()=>updateSupervisorComments(log.id)}>
-                        Save Comment
-                      </Button></div>):(<div><a className='disabledButton'><Button variant="warning" className="disabled">Comment Saved</Button></a></div>)
-                    }
                       
-                     {!log.approvalStatus ? (<div className='text-center' style={{marginLeft:"20px"}}><Button className="btn btn-purple-moon btn-rounded" onClick={()=>submitApproval(log.id)}>
-                        Approve {dropValue}
+                     {!log.approvalStatus ? (<div className='text-center' style={{marginLeft:"20px"}}><Button className="btn btn-rounded"  variant="danger" disabled>
+                        {dropValue} Not Approved
                     </Button></div>  ):(<div style={{marginLeft:"20px"}}><a className='disabledButton'><Button variant="warning" className="disabled">{dropValue} Approved</Button></a></div>)
                     }
                     </div>
@@ -259,186 +285,182 @@ function StudentModal(props) {
     }
   </div>
 
-  <div style={{marginTop:"40px", width:"70%"}} className="mx-auto">
-    
-  </div>
 
-  <div style={{marginTop:"40px", width:"70%", border:"1px solid grey", padding:"40px 100px 40px 100px", borderRadius:"15px"}} className="mx-auto">
+  <div style={{marginTop:"40px", width:"70%", border:"1px solid grey", padding:"40px 50px 40px 50px", borderRadius:"15px"}} className="mx-auto">
     <h4 style={{textAlign:"center"}}>Assessment sheet</h4>
     
     <Form>
       <div className='d-flex justify-content-between' style={{marginTop:"40px"}}>
-        <div><label>Punctuality</label></div>
+        <div><label>Adherence to Guidelines</label></div>
          <div>
           <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={1} onChange={(e)=>setPunctuality(e.target.value)}/>
+              <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value={1} onChange={(e)=>setAdherence(e.target.value)}/>
               <label className="form-check-label" for="inlineRadio1">1</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value={2} onChange={(e)=>setPunctuality(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value={2} onChange={(e)=>setAdherence(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio2">2</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value={3} onChange={(e)=>setPunctuality(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value={3} onChange={(e)=>setAdherence(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio3">3</label>
           </div>
-          <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio4" value={4} onChange={(e)=>setPunctuality(e.target.value)}/>
-            <label className="form-check-label" for="inlineRadio4">4</label>
-          </div>
+          
         </div>   
       </div>   
 
       <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
-          <div><label>Adherence to regulations</label></div>
+          <div><label>Presentation Neatness</label></div>
           <div>
             <div className="form-check form-check-inline">
-                <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={1} onChange={(e)=>setAdherence(e.target.value)} />
+                <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={1} onChange={(e)=>setPresentation(e.target.value)} />
                 <label className="form-check-label" for="inlineRadio1">1</label>
             </div>
             <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={2} onChange={(e)=>setAdherence(e.target.value)}  />
+              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={2} onChange={(e)=>setPresentation(e.target.value)}  />
               <label className="form-check-label" for="inlineRadio2">2</label>
             </div>
             <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={3} onChange={(e)=>setAdherence(e.target.value)}  />
+              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={3} onChange={(e)=>setPresentation(e.target.value)}  />
               <label className="form-check-label" for="inlineRadio3">3</label>
             </div>
-            <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions2" value={4} onChange={(e)=>setAdherence(e.target.value)}  />
-              <label className="form-check-label" for="inlineRadio4">4</label>
-            </div>
+            
           </div>   
       </div>  
 
       <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
-        <div><label style={{marginRight:"15px"}}>Workmanship</label></div>
+        <div><label style={{marginRight:"15px"}}>Evidence of Learned Skills / Training</label></div>
          <div>
           <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={1} onChange={(e)=>setWorkmanship(e.target.value)}/>
+              <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={1} onChange={(e)=>setEvidence(e.target.value)}/>
               <label className="form-check-label" for="inlineRadio1">1</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={2} onChange={(e)=>setWorkmanship(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={2} onChange={(e)=>setEvidence(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio2">2</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={3} onChange={(e)=>setWorkmanship(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={3} onChange={(e)=>setEvidence(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio3">3</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={4} onChange={(e)=>setWorkmanship(e.target.value)} disabled/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions3" value={4} onChange={(e)=>setEvidence(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio4">4</label>
           </div>
+         
         </div>  
       </div>  
 
       <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
-        <div><label style={{marginRight:"15px"}}>Work Output</label></div>
+        <div><label style={{marginRight:"15px"}}>Organizational Structure of Institution</label></div>
         <div>  
           <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={1} onChange={(e)=>setWorkOutput(e.target.value)}/>
+              <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={1} onChange={(e)=>setOrganizational(e.target.value)}/>
               <label className="form-check-label" for="inlineRadio1">1</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={2} onChange={(e)=>setWorkOutput(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={2} onChange={(e)=>setOrganizational(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio2">2</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={3} onChange={(e)=>setWorkOutput(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={3} onChange={(e)=>setOrganizational(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio3">3</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={4} onChange={(e)=>setWorkOutput(e.target.value)} disabled/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={4} onChange={(e)=>setOrganizational(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions5" value={5} onChange={(e)=>setOrganizational(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">5</label>
           </div>
         </div>
       </div>  
 
       <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
-        <div><label style={{marginRight:"15px"}}>Adaptability</label></div>
+        <div><label style={{marginRight:"15px"}}>Mandate / Role of institutions</label></div>
          <div> 
           <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={1} onChange={(e)=>setAdaptability(e.target.value)}/>
+              <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={1} onChange={(e)=>setMandate(e.target.value)}/>
               <label className="form-check-label" for="inlineRadio1">1</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={2} onChange={(e)=>setAdaptability(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={2} onChange={(e)=>setMandate(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio2">2</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={3} onChange={(e)=>setAdaptability(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={3} onChange={(e)=>setMandate(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio3">3</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={4} onChange={(e)=>setAdaptability(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={4} onChange={(e)=>setMandate(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions6" value={5} onChange={(e)=>setMandate(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">5</label>
           </div>
         </div> 
       </div>  
 
       <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
-        <div><label style={{marginRight:"15px"}}>Communication</label></div>
+        <div><label style={{marginRight:"15px"}}>General / Ongoing Work at Institution</label></div>
         <div> 
           <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={1} onChange={(e)=>setCommunication(e.target.value)}/>
+              <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={1} onChange={(e)=>setGeneral(e.target.value)}/>
               <label className="form-check-label" for="inlineRadio1">1</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={2} onChange={(e)=>setCommunication(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={2} onChange={(e)=>setGeneral(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio2">2</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={3} onChange={(e)=>setCommunication(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={3} onChange={(e)=>setGeneral(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio3">3</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={4} onChange={(e)=>setCommunication(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={4} onChange={(e)=>setGeneral(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions7" value={5} onChange={(e)=>setGeneral(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">5</label>
           </div>
         </div>   
       </div>  
 
       <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
-        <div><label style={{marginRight:"15px"}}>Reliability</label></div>
+        <div><label style={{marginRight:"15px"}}>Student Activity at Institution</label></div>
          <div>
           <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={1} onChange={(e)=>setReliability(e.target.value)}/>
+              <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={1} onChange={(e)=>setActivity(e.target.value)}/>
               <label className="form-check-label" for="inlineRadio1">1</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={2} onChange={(e)=>setReliability(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={2} onChange={(e)=>setActivity(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio2">2</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={3} onChange={(e)=>setReliability(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={3} onChange={(e)=>setActivity(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio3">3</label>
           </div>
           <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={4} onChange={(e)=>setReliability(e.target.value)}/>
+            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={4} onChange={(e)=>setActivity(e.target.value)}/>
             <label className="form-check-label" for="inlineRadio4">4</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" type="radio" name="inlineRadioOptions8" value={5} onChange={(e)=>setActivity(e.target.value)}/>
+            <label className="form-check-label" for="inlineRadio4">5</label>
           </div>
         </div>  
       </div>  
 
       <div className='d-flex justify-content-between' style={{marginTop:"10px"}}>
-        <div><label style={{marginRight:"15px"}}>Teamwork</label></div>
+        <div><label style={{marginRight:"15px", color:"red"}}>Penalty for Character Assessment if any noted(-10mks)</label></div>
         <div> 
           <div className="form-check form-check-inline">
-              <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={1} onChange={(e)=>setTeamwork(e.target.value)}/>
-              <label className="form-check-label" for="inlineRadio1">1</label>
-          </div>
-          <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={2} onChange={(e)=>setTeamwork(e.target.value)}/>
-            <label className="form-check-label" for="inlineRadio2">2</label>
-          </div>
-          <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={3} onChange={(e)=>setTeamwork(e.target.value)}/>
-            <label className="form-check-label" for="inlineRadio3">3</label>
-          </div>
-          <div className="form-check form-check-inline">
-            <input className="form-check-input" type="radio" name="inlineRadioOptions9" value={4} onChange={(e)=>setTeamwork(e.target.value)}/>
-            <label className="form-check-label" for="inlineRadio4">4</label>
+              <input className="form-check-input" type="checkbox" name="inlineRadioOptions9" value={-10} onChange={(e)=>setPenalty(e.target.value)}/>
+              <label className="form-check-label" for="inlineRadio1">-10</label>
           </div>
         </div>   
       </div>  
@@ -469,8 +491,23 @@ function StudentModal(props) {
       )}
 
     </Form>
-    
   </div>
+
+  {stuList.map((stu) => {
+       return(
+        <div className='text-center mt-4 mb-4'>
+        {!stu.approvalStatus ? 
+            
+         (<div>
+            <Button variant="primary" className="btn btn-rounded" onClick={()=>submitApproval(stu.id)}>Approve and Terminate Attachment</Button>
+         </div>
+        ) : (<div>
+             <Button variant="danger" className="btn btn-rounded">Approved and Terminated</Button>
+            </div>)
+        }
+        </div>
+    )}
+    )}
 
         </Modal.Body>
         <Modal.Footer>
@@ -484,4 +521,4 @@ function StudentModal(props) {
 }
 
 //render(<Example />);
-export default StudentModal;
+export default StudentModalAS;

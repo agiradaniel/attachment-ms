@@ -126,9 +126,27 @@
   color: #5C6560;
   margin-top:40px
 }
+.studentsContainerAS{
+  background-color: #EBEEF0;
+  width: 70%;
+  min-height: 400px;
+  border-radius: 15px;
+  text-align: center;
+  color: #5C6560;
+  margin-top:40px
+}
 .btn-close{
   background-color: white;
 }
 .disabledButton:hover{
   cursor: not-allowed;
+}
+
+.moreDetailsLink{
+  text-decoration: none;
+  color:#EBEEF0
+}
+.moreDetailsLink:hover{
+  text-decoration: underline;
+  cursor: pointer;
 }

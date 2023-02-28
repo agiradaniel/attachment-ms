@@ -7,7 +7,6 @@ import {collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase-config';
 import StudentModal from '../inc/studentModal';
 
-import SettingsModal from '../inc/settingsModal';
 import SignOut from '../inc/signOut';
 import { Button } from 'react-bootstrap';
 
@@ -39,22 +38,21 @@ const FieldSupervisorDashboard = () => {
     <div>
         <div className='banner' style={{backgroundImage: `url(${Banner})`}}>
                 <FsNavbar/>
-               <SettingsModal/>
                <SignOut/>
                <h1 className='text-center text-white' style={{paddingTop:'40px'}}>Field Supervisor Dashboard</h1>
         </div>
 
         <div className='studentname'>
-                    <h4 className='text-center'>{user.displayName ? (user.displayName + "'s dashboard") : ("User Email: " + user.email)}</h4>
+                    <h4 className='text-center'>{user.displayName ? (user.displayName + "'s Dashboard") : ("User Email: " + user.email)}</h4>
         </div>
 
 
         <div className='studentsContainer mx-auto'>
-            <h3 style={{paddingTop:"20px"}}>Students</h3>
+            <h3 style={{paddingTop:"20px", marginBottom:"20px"}}>Students</h3>
             {stuList.map((stu) => {
                 return(
-                    <div>
-                        <p>{number ++ +". "}{stu.name +"  "}<StudentModal studentId={stu.creatorId}/></p>
+                    <div className='d-flex justify-content-between mx-auto' style={{width:"27%", marginTop:"7px"}}>
+                        <div>{number ++ +". "}{stu.name +"  "}</div><div><StudentModal studentId={stu.creatorId}/></div>
                     </div>
                 ) 
             })

@@ -10,6 +10,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import { db } from '../../firebase-config';
 import {collection, getDocs, limit, onSnapshot, query, where} from 'firebase/firestore'
 import InputModal from '../inc/InputsModal';
+import { Button } from 'react-bootstrap';
 
 const ELogbook = () => {
     
@@ -19,6 +20,7 @@ const ELogbook = () => {
     const [dropValue, setDropValue] = useState("week1")
 
     const [logged, setLogged] = useState([]);
+    const [stuList, setStuList] = useState([]);
 
 
    
@@ -67,7 +69,23 @@ const ELogbook = () => {
        getUsers()
       })*/
 
-
+      const students = collection(db, "user-details");
+    //this code queries student details ie name number location
+    useEffect(()=>{
+        
+        const data = query(students, where("creatorId", "==", user.uid));
+        const unsuscribe =  onSnapshot(data, (snapshot) => {
+            let stuList = []
+            snapshot.docs.forEach((doc)=>{
+               stuList.push({...doc.data(), id: doc.id})
+            })
+            setStuList(stuList)
+           
+      })
+      console.log("Data from user details retrieved")
+      return () => unsuscribe();
+      
+      },[])
      
 
     return(
@@ -109,7 +127,24 @@ const ELogbook = () => {
                         </Dropdown.Menu>
             </Dropdown>
 
-            <InputModal/>
+          
+
+            {stuList.map((stu) => {
+               return(
+                <>
+                     
+                {!stu.approvalStatus ? 
+            
+                 (
+                    <InputModal/>
+                ) : (<div className='d-flex' style={{border:"1px solid red", borderRadius:"8px",fontSize:"14px", fontWeight:"bold", height:"40px", marginLeft:"30px"}}>
+                 <div style={{padding:"8px 2px 5px 10px"}}>Attachment status</div> <div style={{backgroundColor:"red",padding:"8px 10px 5px 5px", borderRadius:"0 8px 8px 0", color:"white"}}> Terminated</div>
+                </div>)
+                }
+                </>
+               )}
+            )}
+
             </div> 
          
             {logged.map((log) => {
@@ -117,29 +152,43 @@ const ELogbook = () => {
                     <Form style={{marginTop:40}}>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Monday</Form.Label>
-                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.monday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.monday || ""} readOnly/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Tuesday</Form.Label>
-                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.tuesday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.tuesday || ""} readOnly/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Wednesday</Form.Label>
-                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.wednesday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.wednesday || ""} readOnly/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Thursday</Form.Label>
-                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.thursday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.thursday || ""} readOnly/>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Friday</Form.Label>
-                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.friday || ""}/>
+                        <Form.Control as="textarea" placeholder="Description of work done" rows={1} value={log.friday || ""} readOnly/>
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Student weekly report</Form.Label>
-                        <Form.Control as="textarea" placeholder="Weekly report" rows={3} value={log.report || ""}/>
+                        <Form.Control as="textarea" placeholder="Weekly report" rows={3} value={log.report || ""} readOnly/>
                     </Form.Group>
+
+                    {log.fieldSupervisorComments &&
+                    <Form.Group className="mb-3" controlId="formBasicEmail" >
+                        <h4 className="text-center" style={{margin:"20px 0 20px"}}>Field Supervisor Comments</h4>
+                        <Form.Control as="textarea" placeholder="Weekly report" rows={3} style={{backgroundColor:"#EBEEF0"}} value={log.fieldSupervisorComments || ""} readOnly/>
+                    </Form.Group>
+                    }
+                    {log.approvalStatus &&
+                    <div className='text-center' style={{margin:"20px 0 20px"}}>
+                    <a className='disabledButton'><Button variant="warning" className="btn btn-rounded" disabled>
+                       <strong>{dropValue} Approved by Field Supervisor</strong> 
+                    </Button></a>
+                    </div>
+                    }
                 </Form>
                 ) 
             })
