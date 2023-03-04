@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { auth, storage } from '../../firebase-config';
 import { useAuthState } from "react-firebase-hooks/auth"
 import SignOut from '../inc/signOut';
-import {ref, uploadBytes} from 'firebase/storage'
+import {ref, uploadBytes, getDownloadURL,listAll,list} from 'firebase/storage';
+import { Button } from 'react-bootstrap';
 
 const Report = () => {
     
@@ -12,8 +13,9 @@ const Report = () => {
 
     const [user] = useAuthState(auth);
 
-    const [fileUpload, setFileUpload] = useState(null)
-    const [successMessage, setSuccessMessage] = useState("")
+    const [fileUpload, setFileUpload] = useState(null);
+    const [successMessage, setSuccessMessage] = useState("");
+    const [fileUrls, setFileUrls] = useState([]);
 
    /* useEffect(() => {
         if(!user){
@@ -33,6 +35,20 @@ const Report = () => {
         console.error(err)
       }  
      } 
+
+     const filesListRef = ref(storage, "Reports/");
+
+     useEffect(() => {
+      listAll(filesListRef).then((response) => {
+        response.items.forEach((item) => {
+          getDownloadURL(item).then((url) => {
+            setFileUrls([url]);
+          });
+        });
+      });
+      console.log(fileUrls)
+    }, []);
+     
     
     return(
         <>
@@ -55,7 +71,19 @@ const Report = () => {
                 >Upload</button>
                 </form>
                 <div><p>{successMessage}</p></div>
+
             </div>
+
+            {fileUrls.map((url) => {
+              return  (
+                <div className='text-center ' style={{marginTop:"50px"}}>
+               <Button onClick={()=> window.open(url, "_blank")} className="btn btn-purple-moon btn-rounded">View report</Button>
+               </div>
+              )
+             
+            })}
+
+
         </>
     )
 }

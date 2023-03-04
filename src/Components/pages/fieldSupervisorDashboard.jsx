@@ -6,9 +6,11 @@ import FsNavbar from "../inc/FsNavbar"
 import {collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../../firebase-config';
 import StudentModal from '../inc/studentModal';
+import Table from 'react-bootstrap/Table';
 
 import SignOut from '../inc/signOut';
 import { Button } from 'react-bootstrap';
+import SettingsModalFd from '../inc/settingsModalFd';
 
 const FieldSupervisorDashboard = () => {
   
@@ -49,16 +51,35 @@ const FieldSupervisorDashboard = () => {
 
         <div className='studentsContainer mx-auto'>
             <h3 style={{paddingTop:"20px", marginBottom:"20px"}}>Students</h3>
-            {stuList.map((stu) => {
-                return(
-                    <div className='d-flex justify-content-between mx-auto' style={{width:"27%", marginTop:"7px"}}>
-                        <div>{number ++ +". "}{stu.name +"  "}</div><div><StudentModal studentId={stu.creatorId}/></div>
-                    </div>
+
+            <Table striped bordered hover size="sm" style={{width:"80%"}} className="mx-auto">
+                  <thead>
+                    <tr>
+                      <th>No</th>
+                      <th>Student Name</th>
+                      <th>Phone</th>
+                      <th>View Student</th>
+                    </tr>
+                  </thead>
+                    {stuList.map((stu) => {
+                return(  
+                  
+                  <tbody>
+                    <tr>
+                      <td>{number ++}</td>
+                      <td style={{textAlign:"left", paddingLeft:"10px"}}>{stu.name}</td>
+                      <td><a href={"tel:" + stu.phone}>{stu.phone}</a></td>
+                      <td><StudentModal studentId={stu.creatorId}/></td>
+                    </tr>
+                  </tbody>
+                
                 ) 
             })
         }
+        </Table>
         
         </div>
+        <SettingsModalFd/>
     </div>
   )
 }

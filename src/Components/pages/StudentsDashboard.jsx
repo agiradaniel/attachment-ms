@@ -10,7 +10,7 @@ import SignOut from '../inc/signOut';
 //import { updateProfile } from 'firebase/auth';
 import SettingsModal from '../inc/settingsModal';
 import GradeModal from '../inc/gradeModal';
-import {collection, query, where, onSnapshot} from 'firebase/firestore';
+import {collection, query, where, onSnapshot, getDocs} from 'firebase/firestore';
 
 
 const StudentDashboard = () => {
@@ -19,7 +19,12 @@ const StudentDashboard = () => {
 
     const [user] = useAuthState(auth);
     let temp = 2;
+    let no = 1;
     const [stuList, setStuList] = useState([]);
+    const [announcements, setAnnouncements] = useState([]);
+    /*const available = null;
+    const theme = available;*/
+
 
     //const [updatedDisplayName, setUpdatedDisplayName] = useState("")
 
@@ -56,6 +61,21 @@ const StudentDashboard = () => {
       
       },[])
 
+      const announcementCollection = collection(db, "announcements");
+
+      useEffect(()=>{
+        const getAnnouncements = async () => {
+          const data = await getDocs(announcementCollection)
+          //set users to show all the data in the collection
+          setAnnouncements(data.docs.map((doc)=>({
+            ...doc.data(), id: doc.id
+          })))
+    
+        }
+    
+        getAnnouncements()
+      },[])
+
     
     return(
         <>
@@ -72,11 +92,24 @@ const StudentDashboard = () => {
                     <h5>Physical assessment schedule</h5>
                 {stuList.map((stu) => {
                     return(
-                    <div>{stu.assessmentDate ? <div style={{border:"1px solid red", width:"50%", margin:"auto"}}>{stu.assessmentDate}</div> : "Not set"}</div>
+                    <div>{stu.assessmentDate ? <div style={{border:"3px solid red", width:"40%", margin:"auto", padding:"3px", borderRadius:"5px"}}>{stu.assessmentDate}</div> : <p style={{marginTop:"10px"}}>Not set</p>}</div>
                     )
                 })}
                     <h5 style={{marginTop:'40px'}}>Announcements</h5>
-                    <p>None yet</p>
+                    
+                    
+                    <div style={{width:"60%", margin:"auto", border:"3px solid #4e54c8", padding:"3px", borderRadius:"5px", maxHeight:"170px", overflowX:"hidden",overflowY:"scroll", backgroundColor:"white"}}>
+                    {announcements.map((ancmt)=>{
+                        return(
+                            <>
+                                
+                                    <div>{ancmt.announcement ?  (no++ +". " + ancmt.announcement) : <div>None yet</div>}</div>
+                              
+                            </>
+                        )
+                    })}
+                    </div>
+                    
                     <GradeModal/>
                 </div>
             </div>

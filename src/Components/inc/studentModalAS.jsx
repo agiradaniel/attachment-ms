@@ -502,7 +502,7 @@ function StudentModalAS(props) {
             <Button variant="primary" className="btn btn-rounded" onClick={()=>submitApproval(stu.id)}>Approve and Terminate Attachment</Button>
          </div>
         ) : (<div>
-             <Button variant="danger" className="btn btn-rounded">Approved and Terminated</Button>
+             <Button variant="danger" className="btn btn-rounded" disabled>Approved and Terminated</Button>
             </div>)
         }
         </div>

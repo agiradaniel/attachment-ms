@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase-config';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-const Login = () => {
+
+const AdminLogin = () => {
     
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -18,7 +19,7 @@ const Login = () => {
        try{
         e.preventDefault();
         await signInWithEmailAndPassword(auth, email, password);
-        navigate("/studentdashboard")
+        navigate("/AdminDashboard")
        }catch(err){
         setErrorMessage(err.message)
        }
@@ -34,7 +35,7 @@ const Login = () => {
 
                 <Dropdown>
                         <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn-purple-moon'>
-                            Student Login
+                            Admin Login
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
@@ -44,8 +45,6 @@ const Login = () => {
                             <Link to="/AdminLogin"><Dropdown.Item href="#/action-5">Admin</Dropdown.Item></Link>
                         </Dropdown.Menu>
                     </Dropdown>
-
-                <form onSubmit={signUserIn}></form>
 
                 <form onSubmit={signUserIn}>
                     
@@ -78,10 +77,11 @@ const Login = () => {
                 </div>
 
             </div>
+           
             
         </>
     );
 
 }
 
-export default Login;
+export default AdminLogin;
