@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import { db } from '../../firebase-config';
 import {getDocs, collection, query, where, onSnapshot, limit, updateDoc, doc} from 'firebase/firestore';
 import Dropdown from 'react-bootstrap/Dropdown';
+import FileIcon from '../Images/fileIcon.jpeg'
 
 
 function StudentModalAdm(props) {
@@ -24,6 +25,7 @@ function StudentModalAdm(props) {
   const [displaySettings, setDisplaySettings]  = useState("none");
   const [supervisorList, setSupervisorList] = useState([]);
   const [fdSupervisorList, setFdSupervisorList] = useState([]);
+  const [report, setReport] = useState([]);
   
     //States for weekly data
     /*const [mondayLog, setMondayLog] = useState("");
@@ -124,6 +126,24 @@ function StudentModalAdm(props) {
          
       
         }
+        const reportDataCollection = collection(db, "reports");
+      //this code is to query report data
+      useEffect(()=>{
+        
+        const data = query(reportDataCollection, where("creatorId", "==", activeId), limit(1))
+        const unsuscribe =  onSnapshot(data, (snapshot) => {
+            let report = []
+            snapshot.docs.forEach((doc)=>{
+               report.push({...doc.data(), id: doc.id})
+            })
+            setReport(report)
+           
+      })
+      console.log("Data from marks collection retrieved")
+      return () => unsuscribe();
+      
+      },[])
+
        
   
 
@@ -301,6 +321,30 @@ function StudentModalAdm(props) {
          ) 
         })
     }
+
+<div style={{textAlign:"center", marginTop:"40px", background: "#4e54c8", color: "white", padding:"15px", borderRadius:"15px"}} className="mx-auto">
+        <h4 style={{textAlign:"center", textDecoration:"underline"}}>Student Report</h4>
+        
+      {report.length > 0 ? (
+
+        report.map((repData) => {
+             return(
+               <>  
+           
+                <div style={{display:"flex", justifyContent:"center", marginTop:"10px"}}>
+                  <img src={FileIcon} alt="file icon" style={{width:"35px", height:"35px", margin:"3px 20px 0 0"}}/>
+                  <p style={{margin:"8px 20px 0 0"}}>{repData.reportName}</p>
+                  <a href={repData.reportLink} target="_blank"><Button className="btn btn-purple-moon btn-rounded" style={{height:"40px"}}>View Report</Button></a>
+                </div>
+                     
+                </>
+                ) 
+            })
+          
+          ):(
+            <p>Not Uploaded Yet!</p>
+          )}
+      </div>
   </div>
 
         </Modal.Body>

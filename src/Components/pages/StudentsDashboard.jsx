@@ -143,7 +143,7 @@ const StudentDashboard = () => {
                 
             </div>
                 :
-            <div style={{width:'70%'}} className="main-area">  
+            <div style={{width:'70%', height:'100%'}} className="main-area">  
                 <div className='studentname'>
                 {stuList.map((stu) => {
                     return(
@@ -168,10 +168,11 @@ const StudentDashboard = () => {
                                     </div>
                                 </Link>    
                              </div>
-                              <div className='d-flex justify-content-center' style={{marginTop:'40px'}}>
+                              <div style={{marginTop:'40px'}}>
                               <Chart/>
-                              
+                             
                                 </div>
+                                
                             </>
                              ):
                              (<div className='mx-auto text-center' style={{height:"660px"}}>

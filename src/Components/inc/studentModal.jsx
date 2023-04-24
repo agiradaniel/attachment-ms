@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import { db } from '../../firebase-config';
 import {addDoc, collection, query, where, onSnapshot, limit, updateDoc, doc} from 'firebase/firestore';
 import Dropdown from 'react-bootstrap/Dropdown';
+import FileIcon from '../Images/fileIcon.jpeg'
 
 
 function StudentModal(props) {
@@ -28,6 +29,7 @@ function StudentModal(props) {
   const [stuList, setStuList] = useState([]);
   const [supervisorComments, setSupervisorComments] = useState("");
   const [displaySettings, setDisplaySettings]  = useState("none");
+  const [report, setReport] = useState([]);
 
 
     //States for weekly data
@@ -118,6 +120,24 @@ function StudentModal(props) {
       return () => unsuscribe();
       
       },[dropValue])
+
+      const reportDataCollection = collection(db, "reports");
+      //this code is to query report data
+      useEffect(()=>{
+        
+        const data = query(reportDataCollection, where("creatorId", "==", activeId), limit(1))
+        const unsuscribe =  onSnapshot(data, (snapshot) => {
+            let report = []
+            snapshot.docs.forEach((doc)=>{
+               report.push({...doc.data(), id: doc.id})
+            })
+            setReport(report)
+           
+      })
+      console.log("Data from marks collection retrieved")
+      return () => unsuscribe();
+      
+      },[])
 
       const marksDataCollection = collection(db, "student-marks");
       //this code is to query marks data
@@ -257,9 +277,34 @@ function StudentModal(props) {
          ) 
         })
     }
+      <div style={{textAlign:"center", marginTop:"40px", background: "#4e54c8", color: "white", padding:"15px", borderRadius:"15px"}} className="mx-auto">
+        <h4 style={{textAlign:"center", textDecoration:"underline"}}>Student Report</h4>
+        
+      {report.length > 0 ? (
+
+        report.map((repData) => {
+             return(
+               <>  
+           
+                <div style={{display:"flex", justifyContent:"center", marginTop:"10px"}}>
+                  <img src={FileIcon} alt="file icon" style={{width:"35px", height:"35px", margin:"3px 20px 0 0"}}/>
+                  <p style={{margin:"8px 20px 0 0"}}>{repData.reportName}</p>
+                  <a href={repData.reportLink} target="_blank"><Button className="btn btn-purple-moon btn-rounded" style={{height:"40px"}}>View Report</Button></a>
+                </div>
+                     
+                </>
+                ) 
+            })
+          
+          ):(
+            <p>Not Uploaded Yet!</p>
+          )}
+      </div>
+
+
   </div>
 
-  <div style={{marginTop:"40px", width:"70%"}} className="mx-auto">
+  <div style={{marginTop:"60px", width:"70%"}} className="mx-auto">
     
   </div>
 

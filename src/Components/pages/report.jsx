@@ -96,9 +96,12 @@ const Report = () => {
                     setFileUpload(e.target.files[0])
                   }}
                 />
-                <button type="submit" className="btn btn-purple-moon btn-rounded" style={{marginTop:'60px'}}
-                  onClick={uploadFile}
-                >Upload</button>
+
+                {report.length > 0 ? (
+                <a className='disabledButton'><Button variant="warning" className="disabled" style={{marginTop:'60px', color:"white", fontWeight:"bold"}}>Submitted</Button></a>
+                ):(<button type="submit" className="btn btn-purple-moon btn-rounded" style={{marginTop:'60px'}}
+                onClick={uploadFile}
+              >Upload</button>)}
                 </form>
                 <div style={{marginTop:"10px"}}><p>{successMessage}</p></div>
                 <div style={{marginTop:"40px"}}><p>{loadingStatus}</p></div>

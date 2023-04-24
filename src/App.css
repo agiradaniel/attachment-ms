@@ -49,9 +49,10 @@
 .notificationbar{
   background-color: #EBEEF0;
   width: 25%;
-  height:74%;
+  min-height: 74vh;
   position:absolute;
   right: 0px;
+  z-index: 0;
  
 
 }
@@ -92,7 +93,7 @@
 .donut{
   width:300px;
   height:300px;
-  margin-top:-20px
+  margin-top:-20px;
 }
 
 .logInputs{

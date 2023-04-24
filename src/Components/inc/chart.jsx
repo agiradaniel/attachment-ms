@@ -55,7 +55,7 @@ const [progressDecrease, setProgressDecrease] = useState(null);
       };
 
   return (
-    <div  className='donut'>
+    <div  className='donut mx-auto'>
       <Doughnut
        
         data={data}
