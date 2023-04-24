@@ -1,16 +1,17 @@
 import {React, useState, useEffect} from 'react';
 import Banner from '../Images/dashboard-banner.jpg';
-import Navbar from '../inc/Navbar';
 import Chart from '../inc/chart';
 import Footer from '../inc/footer';
 import { useNavigate, Link } from 'react-router-dom';
 import { auth, db } from '../../firebase-config';
 import { useAuthState } from "react-firebase-hooks/auth"
-import SignOut from '../inc/signOut';
 //import { updateProfile } from 'firebase/auth';
 import SettingsModal from '../inc/settingsModal';
 import GradeModal from '../inc/gradeModal';
 import {collection, query, where, onSnapshot, getDocs} from 'firebase/firestore';
+import { FidgetSpinner } from  'react-loader-spinner'
+import SideBarMenu from '../inc/sideBar';
+import { Button } from 'react-bootstrap';
 
 
 const StudentDashboard = () => {
@@ -22,27 +23,30 @@ const StudentDashboard = () => {
     let no = 1;
     const [stuList, setStuList] = useState([]);
     const [announcements, setAnnouncements] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [modalStatus, setModalStatus] = useState(false);
+
     /*const available = null;
     const theme = available;*/
 
 
     //const [updatedDisplayName, setUpdatedDisplayName] = useState("")
 
-    /*useEffect(() => {
-        if(!user){
+    useEffect(() => {
+        if(!user || user.displayName !== "student" && user.displayName !== null){
           navigate("/");
         }
 
         console.log(auth.currentUser)
-      },[]);*/
+      },[]);
 
-      /*
-      const updateName = async () => {
+      
+      /*const updateName = async () => {
         const updatedUser = await updateProfile(user, {
-          displayName: updatedDisplayName,
+          displayName: "student"
         });
-      };
-      */
+      };*/
+      
       const students = collection(db, "user-details");
         //this code queries student details ie name number location
         useEffect(()=>{
@@ -76,19 +80,25 @@ const StudentDashboard = () => {
         getAnnouncements()
       },[])
 
+      useEffect(() => {
+        const timer = setTimeout(() => {
+          setIsLoading(false);
+          setModalStatus(true)
+        }, 2000);
+        return () => clearTimeout(timer);
+      }, []);
+
+
     
     return(
         <>
 
             <div className='banner' style={{backgroundImage: `url(${Banner})`}}>
-               <Navbar/>
-               
-               <SignOut/>
-               <h1 className='text-center text-white' style={{paddingTop:'40px'}}>Student Dashboard</h1>
+               <h1 className='text-center text-white' style={{paddingTop:'70px'}}>Student Dashboard</h1>
             </div>
 
             <div className='notificationbar'>
-                <div className='text-center' style={{marginTop:'190px'}}>
+                <div className='text-center' style={{marginTop:'130px'}}>
                     <h5>Physical assessment schedule</h5>
                 {stuList.map((stu) => {
                     return(
@@ -114,37 +124,64 @@ const StudentDashboard = () => {
                 </div>
             </div>
 
+          <SideBarMenu/>
 
+            {isLoading ? 
+            <div style={{height:"660px",width:'70%', textAlign:"center"}}>
+                <div style={{marginTop:"250px"}}>
+                <FidgetSpinner
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+                ballColors={['#ff0000', '#00ff00', '#0000ff']}
+                backgroundColor="#F4442E"
+                />
+                </div>
+                
+            </div>
+                :
             <div style={{width:'70%'}} className="main-area">  
                 <div className='studentname'>
-                    <h4 className='text-center'>{user.displayName ? (user.displayName + "'s dashboard") : ("User Email: " + user.email)}</h4>
+                {stuList.map((stu) => {
+                    return(
+                        <h4 className='text-center'>{stu.name ? (stu.name + "'s dashboard") : ("User Email: " + user.email)}</h4>
+                     )
+                    })}
                 </div>
+               
+                        {stuList != "" ? 
+                            (
+                            <>
+                            <div className='buttonwrap d-flex justify-content-center container'>
+                                <Link to="/eLogbook" style={{ textDecoration: 'none'}}>
+                                     <div className='mainButton p-2 btn-purple-moon' style={{marginRight:'120px'}}>  
+                                         <p style={{marginTop:'50px'}}>E-Logbook</p>
+                                    </div>
+                                </Link>
 
-                {user.displayName ? 
-                (<div className='buttonwrap d-flex justify-content-center container'>
-                    <Link to="/eLogbook" style={{ textDecoration: 'none'}}>
-                        <div className='mainButton p-2 btn-purple-moon' style={{marginRight:'120px'}}>  
-                            <p style={{marginTop:'50px'}}>E-Logbook</p>
-                        </div>
-                    </Link>
-                    <Link to="/Report" style={{ textDecoration: 'none'}}>
-                        <div className='mainButton p-2 btn-purple-moon' >  
-                            <p style={{marginTop:'50px'}}>E-Report</p>
-                        </div>
-                    </Link>    
-                </div>):(<div className='mx-auto text-center' style={{height:"270px"}}>
-                    <h3 style={{paddingTop:"150px"}}>Hi ,,, Update your details to proceed</h3>
-                    <SettingsModal/>
-                </div>)
-                }
-
-                <div className='d-flex justify-content-center' style={{marginTop:'40px'}}>
-                    <Chart/>
-                    
-                </div>
+                                 <Link to="/Report" style={{ textDecoration: 'none'}}>
+                                     <div className='mainButton p-2 btn-purple-moon' >  
+                                       <p style={{marginTop:'50px'}}>E-Report</p>
+                                    </div>
+                                </Link>    
+                             </div>
+                              <div className='d-flex justify-content-center' style={{marginTop:'40px'}}>
+                              <Chart/>
+                              
+                                </div>
+                            </>
+                             ):
+                             (<div className='mx-auto text-center' style={{height:"660px"}}>
+                                 <h3 style={{paddingTop:"150px"}}>Hi ,,, Update your details to proceed</h3>
+                                  <SettingsModal handleAppear={modalStatus}/>
+                              </div>)
+                              }
             
 
-            </div>    
+            </div>}
             <Footer/>
         </>
     )

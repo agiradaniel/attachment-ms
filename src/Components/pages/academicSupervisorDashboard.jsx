@@ -8,8 +8,8 @@ import { db } from '../../firebase-config';
 import StudentModalAS from '../inc/studentModalAS';
 import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
-
-
+import { FidgetSpinner } from  'react-loader-spinner';
+import { useNavigate } from 'react-router-dom';
 
 import SignOut from '../inc/signOut';
 import AnnouncementModal from '../inc/announcementModal';
@@ -17,11 +17,21 @@ import SettingsModalAs from '../inc/settingsModalAs';
 
 const AcademicSupervisorDashboard = () => {
   
+    const navigate = useNavigate();
     const [user] = useAuthState(auth);
     const [stuList, setStuList] = useState([]);
     const [announcements, setAnnouncements] = useState([]);
     let number = 1;
     let no = 1;
+    const [supervisorList, setSupervisorList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [modalStatus, setModalStatus] = useState(false);
+
+    useEffect(() => {
+      if(!user || user.displayName !== "Academic Supervisor" && user.displayName !== null){
+        navigate("/");
+      }
+    },[]);
 
     const students = collection(db, "user-details");
 
@@ -43,6 +53,24 @@ const AcademicSupervisorDashboard = () => {
 
       const announcementCollection = collection(db, "announcements");
 
+      const acSupervisorCollection = collection(db, "Academic-supervisor-details");
+
+      useEffect(()=>{
+        
+        const data = query(acSupervisorCollection, where("creatorId", "==", user.uid));
+        const unsuscribe =  onSnapshot(data, (snapshot) => {
+            let supervisorList = []
+            snapshot.docs.forEach((doc)=>{
+               supervisorList.push({...doc.data(), id: doc.id})
+            })
+            setSupervisorList(supervisorList)
+           
+      })
+      console.log("Data from supervisor details retrieved");
+      return () => unsuscribe();
+     
+      },[])
+     
       useEffect(()=>{
         
         const unsuscribe =  onSnapshot(announcementCollection, (snapshot) => {
@@ -63,21 +91,52 @@ const AcademicSupervisorDashboard = () => {
     const announcementDoc = doc(db, "announcements", id);
     await deleteDoc(announcementDoc)
   }
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+      setModalStatus(true)
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
   
 
     return (
     <div>
         <div className='banner' style={{backgroundImage: `url(${Banner})`}}>
-                <AsNavbar/>
-               <SignOut/>
-               <h1 className='text-center text-white' style={{paddingTop:'40px'}}>Academic Supervisor Dashboard</h1>
+
+               <h1 className='text-center text-white' style={{paddingTop:'60px'}}>Academic Supervisor Dashboard</h1>
         </div>
 
+        <AsNavbar/>
         <div className='studentname'>
-                    <h4 className='text-center'>{user.displayName ? (user.displayName + "'s Dashboard") : ("User Email: " + user.email)}</h4>
+        {supervisorList.map((supervisor) => {
+                    return(
+                    <h4 className='text-center'>{supervisor.name ? (supervisor.name + "'s Dashboard") : ("User Email: " + user.email)}</h4>
+                    )
+                    })}
         </div>
 
-      {user.displayName ? 
+        {isLoading ? 
+            <div style={{height:"660px", textAlign:"center"}}>
+                <div style={{marginTop:"200px"}}>
+                <FidgetSpinner
+                visible={true}
+                height="80"
+                width="80"
+                ariaLabel="dna-loading"
+                wrapperStyle={{}}
+                wrapperClass="dna-wrapper"
+                ballColors={['#ff0000', '#00ff00', '#0000ff']}
+                backgroundColor="#F4442E"
+                />
+                </div>
+                
+            </div>
+
+                :
+<>
+      {supervisorList != "" ? 
         (
         <>
         <div className='studentsContainerAS mx-auto'>
@@ -134,11 +193,11 @@ const AcademicSupervisorDashboard = () => {
         ) : (
           <div className='mx-auto text-center' style={{height:"270px"}}>
           <h3 style={{paddingTop:"150px"}}>Hi ,,, Update your details to proceed</h3>
-          <SettingsModalAs/>
+          <SettingsModalAs handleAppear={modalStatus}/>
       </div>
         )}
-
-
+        </>
+        }
     </div>
   )
 }

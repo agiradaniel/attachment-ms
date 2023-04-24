@@ -1,16 +1,15 @@
 import {React, useEffect, useState} from 'react';
 import Form from 'react-bootstrap/Form';
-import Navbar from '../inc/Navbar';
 import Chart from '../inc/chart';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../../firebase-config';
 import { useAuthState } from "react-firebase-hooks/auth"
-import SignOut from '../inc/signOut';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { db } from '../../firebase-config';
 import {collection, getDocs, limit, onSnapshot, query, where} from 'firebase/firestore'
 import InputModal from '../inc/InputsModal';
 import { Button } from 'react-bootstrap';
+import SideBarMenu from '../inc/sideBar';
 
 const ELogbook = () => {
     
@@ -91,17 +90,16 @@ const ELogbook = () => {
     return(
         <>
             <div style={{backgroundColor:'#4e54c8', height: '100px'}}>
-               <Navbar/>
-               <SignOut/>
-               <h1 className='text-center text-white' style={{marginTop:'-20px'}}>E-Logbook</h1>
+               <h1 className='text-center text-white' style={{paddingTop: '20px'}}>E-Logbook</h1>
             </div>
 
             <div className='lognotificationbar'>
-              <div style={{margin:'140px 0 0 30px'}}>
-                <Chart/>
-            </div>   
+                 <div style={{margin:'140px 0 0 30px'}}>
+                     <Chart/>
+                </div>   
             </div>
-            
+
+            <SideBarMenu/>
 
             <div className="logInputs">
 

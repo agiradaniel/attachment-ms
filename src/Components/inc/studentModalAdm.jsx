@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import { db } from '../../firebase-config';
-import {collection, query, where, onSnapshot, limit, updateDoc, doc} from 'firebase/firestore';
+import {getDocs, collection, query, where, onSnapshot, limit, updateDoc, doc} from 'firebase/firestore';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 
@@ -14,20 +14,17 @@ function StudentModalAdm(props) {
   const handleShow = () => setShow(true);
   const activeId = props.studentId;
   let name = "";
+  let sname = "";
+  let sid = "";
+  let fid = "";
+  let fname = "";
 
   const [dropValue, setDropValue] = useState("week1");
   const [stuList, setStuList] = useState([]);
   const [displaySettings, setDisplaySettings]  = useState("none");
   const [supervisorList, setSupervisorList] = useState([]);
   const [fdSupervisorList, setFdSupervisorList] = useState([]);
-  const [supervisorId, setSupervisorId] = useState("");
-  const [supervisorName, setSupervisorName] = useState("");
-  const [fdSupervisorId, setFdSupervisorId] = useState("");
-  const [fdSupervisorName, setFdSupervisorName] = useState("");
   
-
-
-
     //States for weekly data
     /*const [mondayLog, setMondayLog] = useState("");
     const [tuesdayLog, setTuesdayLog] = useState("");
@@ -77,58 +74,53 @@ function StudentModalAdm(props) {
       
       },[dropValue])
 
-      const supervisorsCollection = collection(db, "Academic-supervisor-details");
+         //specifying the database collection
+        const supervisorsCollectionRef = collection(db, "Academic-supervisor-details");
 
-      useEffect(()=>{
-          
-          const data = query(supervisorsCollection, where("role", "==", "Academic Supervisor"));
-          const unsuscribe =  onSnapshot(data, (snapshot) => {
-              let supervisorList = []
-              snapshot.docs.forEach((doc)=>{
-                 supervisorList.push({...doc.data(), id: doc.id})
-              })
-              setSupervisorList(supervisorList)
-             
-        })
-        console.log("Data from academic supervisor details retrieved");
-        return () => unsuscribe();
-       
-        },[])
+        //showing the data on the database collection on your page
+         useEffect(()=>{
+            const getSupervisors = async () => {
+            const data = await getDocs(supervisorsCollectionRef)
+        //set users to show all the data in the collection
+             setSupervisorList(data.docs.map((doc)=>({
+               ...doc.data(), id: doc.id
+            })))
+
+         }
+
+          getSupervisors()
+         },[])
 
         const updateSupervisorDetails = async (id) => {
           //in update you reference a specific doc not the whole collection
           
           const userDoc = doc(db, "user-details", id);
-          await updateDoc(userDoc, { supervisorId: supervisorId, supervisorName: supervisorName});
-          console.log(supervisorId);
-         
+          await updateDoc(userDoc, {supervisorName: sname, supervisorId: sid});
       
         }
 
-        const fdSupervisorsCollection = collection(db, "Field-supervisor-details");
+         //specifying the database collection
+         const fdSupervisorsCollectionRef = collection(db, "Field-supervisor-details");
 
-      useEffect(()=>{
-          
-          const data = query(fdSupervisorsCollection, where("role", "==", "Field Supervisor"));
-          const unsuscribe =  onSnapshot(data, (snapshot) => {
-              let fdSupervisorList = []
-              snapshot.docs.forEach((doc)=>{
-                 fdSupervisorList.push({...doc.data(), id: doc.id})
-              })
-              setFdSupervisorList(fdSupervisorList)
-             
-        })
-        console.log("Data from field supervisor details retrieved");
-        return () => unsuscribe();
-       
-        },[])
+         //showing the data on the database collection on your page
+          useEffect(()=>{
+             const getFdSupervisors = async () => {
+             const data = await getDocs(fdSupervisorsCollectionRef)
+         //set users to show all the data in the collection
+              setFdSupervisorList(data.docs.map((doc)=>({
+                ...doc.data(), id: doc.id
+             })))
+ 
+          }
+ 
+           getFdSupervisors()
+          },[])
 
         const updateFdSupervisorDetails = async (id) => {
           //in update you reference a specific doc not the whole collection
           
           const userDocFd = doc(db, "user-details", id);
-          await updateDoc(userDocFd, { fdSupervisorId: fdSupervisorId, fdSupervisorName: fdSupervisorName});
-          console.log(fdSupervisorId);
+          await updateDoc(userDocFd, {fdSupervisorName: fname, fdSupervisorId: fid});
          
       
         }
@@ -179,7 +171,7 @@ function StudentModalAdm(props) {
                           }>More details</a>
                     </div>
 
-                    {!stu.supervisorId ?
+          {!stu.supervisorId ?
                       (<Dropdown style={{textAlign: "center", marginTop:40}}>
                         <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn-purple-moon'>
                           Assign Academic Supervisor
@@ -189,17 +181,17 @@ function StudentModalAdm(props) {
                         {supervisorList.map((supervisor)=>{
                           return(
                             <Dropdown.Item onClick={()=>{
-                              setSupervisorId(supervisor.creatorId);
-                              setSupervisorName(supervisor.name);
+                              sname = supervisor.name;
+                              sid = supervisor.creatorId;
                               updateSupervisorDetails(stu.id);
                             }}>{supervisor.name}</Dropdown.Item>
                           )
                         })}
                   
                       </Dropdown.Menu>
-      </Dropdown>) : (<div style={{textAlign:"center", marginTop:"20px", background: "#4e54c8", color: "white", width:"50%", padding:"15px", borderRadius:"15px"}} className="mx-auto">
-          Student assigned to {stu.supervisorName}
-      </div>)}
+               </Dropdown>) : (<div style={{textAlign:"center", marginTop:"20px", background: "#4e54c8", color: "white", width:"50%", padding:"15px", borderRadius:"15px"}} className="mx-auto">
+                  Student assigned to {stu.supervisorName}
+                 </div>)}
 
       {!stu.fdSupervisorId ?
                       (<Dropdown style={{textAlign: "center", marginTop:40}}>
@@ -211,8 +203,8 @@ function StudentModalAdm(props) {
                         {fdSupervisorList.map((fdsupervisor)=>{
                           return(
                             <Dropdown.Item onClick={()=>{
-                              setFdSupervisorId(fdsupervisor.creatorId);
-                              setFdSupervisorName(fdsupervisor.name);
+                              fname = fdsupervisor.name;
+                              fid = fdsupervisor.creatorId;
                               updateFdSupervisorDetails(stu.id);
                             }}>{fdsupervisor.name}</Dropdown.Item>
                           )
@@ -229,6 +221,7 @@ function StudentModalAdm(props) {
              
             })
         }
+
 
     <div className='logBookArea mx-auto' style={{width:"70%", marginTop:"20px"}}>
       <h3 style={{textAlign:"center"}}>Student Logbook</h3>

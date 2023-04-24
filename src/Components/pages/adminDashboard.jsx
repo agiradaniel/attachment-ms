@@ -2,22 +2,32 @@ import React, { useState, useEffect } from 'react';
 import Banner from '../Images/dashboard-banner.jpg';
 import { auth } from '../../firebase-config';
 import { useAuthState } from "react-firebase-hooks/auth";
-import AdmNavbar from "../inc/AsNavbar";
+import AdmNavbar from "../inc/AdmNavbar";
 import {collection, query, where, onSnapshot, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase-config';
 import StudentModalAdm from '../inc/studentModalAdm';
 import Table from 'react-bootstrap/Table';
-import { Button } from 'react-bootstrap';
 import SignOut from '../inc/signOut';
 import AnnouncementModal from '../inc/announcementModal';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   
+    const navigate = useNavigate();
+
     const [user] = useAuthState(auth);
     const [stuList, setStuList] = useState([]);
     const [announcements, setAnnouncements] = useState([]);
     let number = 1;
     let no = 1;
+
+    useEffect(() => {
+      if(!user || user.displayName !== "Admin"){
+        navigate("/");
+      }
+
+      console.log(auth.currentUser)
+    },[]);
 
     const students = collection(db, "user-details");
 
@@ -64,17 +74,17 @@ const AdminDashboard = () => {
     return (
     <div>
         <div className='banner' style={{backgroundImage: `url(${Banner})`}}>
-                <AdmNavbar/>
-               <SignOut/>
-               <h1 className='text-center text-white' style={{paddingTop:'40px'}}>Administrator Dashboard</h1>
+   
+               <h1 className='text-center text-white' style={{paddingTop:'60px'}}>Administrator Dashboard</h1>
         </div>
+
+        <AdmNavbar/>
 
         <div className='studentname'>
                     <h4 className='text-center'>{user.displayName ? (user.displayName + "'s Dashboard") : ("User Email: " + user.email)}</h4>
         </div>
 
-
-        <div className='studentsContainerAS mx-auto'>
+        <div className='studentsContainerAS mx-auto' style={{paddingBottom:"20px"}}>
             <h3 style={{paddingTop:"20px", marginBottom:"20px"}}>Students</h3>
             
                   <Table striped bordered hover size="sm" style={{width:"80%"}} className="mx-auto">
@@ -98,8 +108,8 @@ const AdminDashboard = () => {
                       <td style={{textAlign:"left"}}>{stu.name}</td>
                       <td><a href={"tel:" + stu.phone}>{stu.phone}</a></td>
                       <td>{stu.location}</td>
-                      <td>{stu.supervisorName || "Not assigned"}</td>
-                      <td>{stu.fdSupervisorName || "Not assigned"}</td>
+                      <td>{stu.supervisorName || <div style={{color:"red"}}>Not assigned</div>}</td>
+                      <td>{stu.fdSupervisorName || <div style={{color:"red"}}>Not assigned</div>}</td>
                       <td><StudentModalAdm studentId={stu.creatorId}/></td>
                     </tr>
                   </tbody>

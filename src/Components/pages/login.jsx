@@ -39,8 +39,8 @@ const Login = () => {
 
                         <Dropdown.Menu>
                             <Link to="/"><Dropdown.Item href="#/action-2">Student</Dropdown.Item></Link>
-                            <Link to="/FieldSupervisorLogin"><Dropdown.Item href="#/action-3">Field supervisor</Dropdown.Item></Link>
-                            <Link to="/AcademicSupervisorLogin"><Dropdown.Item href="#/action-4">Academic supervisor</Dropdown.Item></Link>
+                            <Link to="/AcademicSupervisorLogin"><Dropdown.Item href="#/action-3">Academic supervisor</Dropdown.Item></Link>
+                            <Link to="/FieldSupervisorLogin"><Dropdown.Item href="#/action-4">Field supervisor</Dropdown.Item></Link>
                             <Link to="/AdminLogin"><Dropdown.Item href="#/action-5">Admin</Dropdown.Item></Link>
                         </Dropdown.Menu>
                     </Dropdown>

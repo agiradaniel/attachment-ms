@@ -13,6 +13,7 @@ import MapContainer from './Components/inc/map';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AdminLogin from './Components/pages/adminLogin';
 import AdminDashboard from './Components/pages/adminDashboard';
+import Immunify from './Components/temp-pages/immunify';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path="AdminLogin" element={<AdminLogin/>}/>
           <Route path="maps" element={<MapContainer/>}/>
           <Route path="AdminDashboard" element={<AdminDashboard/>}/>
+          <Route path="Immunify" element={<Immunify/>}/>
           
           
           </Routes> 

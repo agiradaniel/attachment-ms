@@ -6,8 +6,9 @@ import { auth, db} from '../../firebase-config';
 import { updateProfile } from 'firebase/auth';
 import { addDoc, collection } from 'firebase/firestore';
 
-function SettingsModalAs() {
-  const [show, setShow] = useState(false);
+function SettingsModalAs(props) {
+  const handleToggle = props.handleAppear;
+  const [show, setShow] = useState(handleToggle || false);
 
   const handleClose = () => {setShow(false)};
   const handleShow = () => setShow(true);
@@ -21,7 +22,7 @@ const [phone, setPhone] = useState("");
 
 const updateName = async () => {
     const updatedUser = await updateProfile(user, {
-    displayName: updatedDisplayName,
+    displayName: "Academic Supervisor",
   });
 };
 
@@ -36,6 +37,7 @@ const userCollection = collection(db, "Academic-supervisor-details");
             role: "Academic Supervisor",
             creatorId: user.uid
         })
+        handleClose();
       }
 
 useEffect(()=>{
@@ -47,13 +49,13 @@ useEffect(()=>{
   return (
     
     <>
-      <Button onClick={handleShow} className='btn btn-purple-moon btn-rounded'>
-        Update Details
-      </Button>
+      <span onClick={handleShow}>
+        Settings
+      </span>
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Update user settings</Modal.Title>
+      <Modal show={show}>
+        <Modal.Header style={{background: "#4e54c8", color: "white"}}>
+          <Modal.Title>Update user details to proceed</Modal.Title>
         </Modal.Header>
         <Modal.Body>
         <div className="mx-auto text-center">
@@ -87,10 +89,8 @@ useEffect(()=>{
         </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button onClick={()=>{handleClose(); updateName(); updateDetails()}} className="btn btn-purple-moon btn-rounded">
+          
+          <Button onClick={()=>{updateName(); updateDetails()}} className="btn btn-purple-moon btn-rounded">
             Save Changes
           </Button>
         </Modal.Footer>

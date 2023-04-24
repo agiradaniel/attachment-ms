@@ -63,7 +63,7 @@ const Login = () => {
                     
                     <div className="mb-3" style={{marginTop:10}}>
                         <label for="exampleInputEmail1" className="form-label">Email</label>
-                        <input type="email" className="form-control" onChange={(e)=>{
+                        <input type="text" className="form-control" onChange={(e)=>{
                             setNewEmail(e.target.value);
                         }}/>
                        

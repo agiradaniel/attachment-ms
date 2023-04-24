@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from '../../firebase-config';
+import { auth, db } from '../../firebase-config';
 import Form from 'react-bootstrap/Form';
-import { db } from '../../firebase-config';
-import {addDoc, collection} from 'firebase/firestore';
+import {addDoc, collection, updateDoc, query, where, onSnapshot, doc} from 'firebase/firestore';
 import Dropdown from 'react-bootstrap/Dropdown';
 
 
@@ -16,7 +15,11 @@ function InputModal() {
   const handleShow = () => setShow(true);
 
   const [user] = useAuthState(auth);
-  const [dropValue, setDropValue] = useState("week1")
+  const [dropValue, setDropValue] = useState("week1");
+  const [stuList, setStuList] = useState([]);
+  const [progressIncrease, setProgressIncrease] = useState(null);
+  const [progressDecrease, setProgressDecrease] = useState(null);
+  const [logbookEmptyError, setLogbookEmptyError] = useState("");
 
     //States for weekly data
     const [mondayLog, setMondayLog] = useState("");
@@ -31,24 +34,62 @@ useEffect(()=>{
     console.log(user);
 })
 
+const students = collection(db, "user-details");
+//this code queries student details ie name number location
+useEffect(()=>{
+
+const data = query(students, where("creatorId", "==", user.uid));
+const unsuscribe =  onSnapshot(data, (snapshot) => {
+    let stuList = []
+    snapshot.docs.forEach((doc)=>{
+       stuList.push({...doc.data(), id: doc.id})
+    })
+    setStuList(stuList);
+    
+    stuList.map((stu)=>{
+      setProgressIncrease(stu.progress)
+      setProgressDecrease(stu.progressNeg)
+    })
+   
+})
+console.log("Data from user details retrieved")
+return () => unsuscribe();
+
+},[])
+
+const updateProgress = async(id) => {
+    const progressDoc = doc(db, "user-details", id);
+    await updateDoc(progressDoc, { progress: progressIncrease + 1, progressNeg: progressDecrease - 1})
+}
+
 const weekCollection = collection(db, dropValue);
 
       const submitLog = async(e) => {
-        e.preventDefault();
-        await addDoc(weekCollection, {
-            monday: mondayLog, 
-            tuesday: tuesdayLog,
-            wednesday: wednesdayLog,
-            thursday: thursdayLog,
-            friday: fridayLog,
-            report: reportLog,
-            creatorId: user.uid
-        })
+        if(mondayLog && tuesdayLog && wednesdayLog && thursdayLog && fridayLog){
+            e.preventDefault();
+            await addDoc(weekCollection, {
+                monday: mondayLog, 
+                tuesday: tuesdayLog,
+                wednesday: wednesdayLog,
+                thursday: thursdayLog,
+                friday: fridayLog,
+                report: reportLog,
+                creatorId: user.uid
+            })
+            stuList.map((stu) => {   
+                updateProgress(stu.id)
+             });
+             handleClose();
+        }else{
+            setLogbookEmptyError("Logs cannot be empty")
+        }
+       
+        
       }
 
  //this code clears the states to empty the input values
  const clearStateValues = () =>{
-    setMondayLog(""); setTuesdayLog(""); setWednesdayLog(""); setThursdayLog(""); setFridayLog(""); 
+    setMondayLog(""); setTuesdayLog(""); setWednesdayLog(""); setThursdayLog(""); setFridayLog(""); setLogbookEmptyError("");
   }
 
 
@@ -86,8 +127,8 @@ const weekCollection = collection(db, dropValue);
                         </Dropdown.Menu>
             </Dropdown>
 
-
         <Form style={{marginTop:40}}>
+                     <p style={{color:"red", fontWeight:"bold", textAlign:"center"}}>{logbookEmptyError}</p>
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Monday</Form.Label>
                         <Form.Control as="textarea" placeholder="Description of work done"  rows={1} value={mondayLog}

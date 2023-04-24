@@ -1,26 +1,38 @@
-import React from 'react'
+import { Sidebar, Menu, MenuItem, useProSidebar } from 'react-pro-sidebar';
 import { Link } from 'react-router-dom';
-import Dropdown from 'react-bootstrap/Dropdown';
+import Hambuger from '../Images/hambuger.png';
+import { auth } from '../../firebase-config';
+import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import SettingsModalFd from './settingsModalFd';
 
-const FsNavbar = () => {
-    return(
-        <>
-         
-              <Dropdown>
-                        <Dropdown.Toggle variant="success" id="dropdown-basic" className='btn-purple-moon'>
-                            Navigate
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                        
-                        <Link to="/FieldSupervisorDashboard" ><Dropdown.Item href="#/action-2">Dashboard</Dropdown.Item></Link>
-                        <Link to="/next" ><Dropdown.Item href="#/action-3">Next</Dropdown.Item></Link>
-                        
-            
-                        </Dropdown.Menu>
-             </Dropdown>
-         
-        </>
-    );
+function FsNavbar() {
+
+  const { collapseSidebar } = useProSidebar();
+
+  const navigate = useNavigate();
+
+  const signUserOut = async () => {
+      await signOut(auth);
+      navigate("/")
+  }
+
+  return (
+    <div style={{ display: 'flex', height: '550px', position: 'absolute'}}>
+      <Sidebar width="140px">
+        <Menu>
+          <MenuItem component={<Link to="/FieldSupervisorDashboard"/>}> Dashboard</MenuItem>
+          <MenuItem component={<Link to="/next"/>}> Reload</MenuItem>
+
+          <MenuItem style={{marginTop:"350px"}}> <SettingsModalFd/> </MenuItem>
+          <MenuItem onClick={signUserOut}> Logout</MenuItem>
+        </Menu>
+      </Sidebar>
+      <main>
+        <img style={{width:"40px"}}  src={Hambuger} onClick={() => collapseSidebar()}/>
+      </main>
+    </div>
+  );
 }
 
-export default FsNavbar;
+export default FsNavbar
