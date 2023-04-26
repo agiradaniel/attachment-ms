@@ -16,6 +16,7 @@ function SettingsModal(props) {
   const [user] = useAuthState(auth);
   const [updatedDisplayName, setUpdatedDisplayName] = useState("");
   const [admNo, setAdmNo] = useState("");
+  const [company, setCompany] = useState("");
   const [location, setLocation] = useState("");
   const [phone, setPhone] = useState("");
 
@@ -35,7 +36,8 @@ const userCollection = collection(db, "user-details");
         await addDoc(userCollection, {
             name: updatedDisplayName,
             admNo: admNo,
-            location: location,
+            location: company,
+            company: location,
             phone: phone,
             role: "student",
             progress: 0,
@@ -43,12 +45,6 @@ const userCollection = collection(db, "user-details");
             creatorId: user.uid
         })
       }
-
-useEffect(()=>{
-    console.log(user);
-})
-
-
 
   return (
     
@@ -80,7 +76,15 @@ useEffect(()=>{
                         style={{margin: "10px 0 10px"}}
                      />
                       <br/>
-                     <label> Location </label>
+                     <label> Company </label>
+                    <br/>
+                    <input
+                        type="text"
+                        onChange={(event) => setCompany(event.target.value)}
+                        style={{margin: "10px 0 10px"}}
+                     />
+                      <br/>
+                     <label> Location</label>
                     <br/>
                     <input
                         type="text"

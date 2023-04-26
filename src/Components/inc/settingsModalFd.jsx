@@ -36,16 +36,11 @@ const userCollection = collection(db, "Field-supervisor-details");
             company: company,
             phone: phone,
             role: "Field Supervisor",
+            approval: false,
             creatorId: user.uid
         })
         handleClose(); 
       }
-
-useEffect(()=>{
-    console.log(user);
-})
-
-
 
   return (
     

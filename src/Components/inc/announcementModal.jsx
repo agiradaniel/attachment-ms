@@ -23,10 +23,13 @@ const [announcement, setAnnouncement] = useState("");
 const announcementCollection = collection(db, "announcements");
 
       const updateAnnouncement = async() => {
-        
+        const now = new Date();
+        const date = now.toLocaleDateString('en-GB');
         await addDoc(announcementCollection, {
             announcement: announcement,
-            creatorId: user.uid
+            creatorId: user.uid,
+            date: date
+            
         })
       }
 

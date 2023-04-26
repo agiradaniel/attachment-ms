@@ -40,12 +40,6 @@ const userCollection = collection(db, "Academic-supervisor-details");
         handleClose();
       }
 
-useEffect(()=>{
-    console.log(user);
-})
-
-
-
   return (
     
     <>

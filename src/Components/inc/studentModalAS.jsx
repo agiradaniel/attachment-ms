@@ -191,7 +191,8 @@ function StudentModalAS(props) {
                         <div style={{display:"none"}}> {name = stu.name} </div>
                         <div style={{display: displaySettings}}>
                         <h4>Phone: {stu.phone}</h4>
-                        <h4>Location: {stu.location}</h4>
+                        <h4>Company: {stu.location}</h4>
+                        <h4>Location: {stu.company || "Not set"}</h4>
                        </div>
                         <a className='moreDetailsLink' onClick={()=>
                           

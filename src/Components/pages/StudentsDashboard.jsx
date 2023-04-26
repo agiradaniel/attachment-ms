@@ -113,7 +113,7 @@ const StudentDashboard = () => {
                         return(
                             <>
                                 
-                                    <div>{ancmt.announcement ?  (no++ +". " + ancmt.announcement) : <div>None yet</div>}</div>
+                                    <div>{ancmt.announcement ?  (no++ +". " + ancmt.announcement + " ~ " + ancmt.date) : <div>None yet</div>}</div>
                               
                             </>
                         )
@@ -143,7 +143,7 @@ const StudentDashboard = () => {
                 
             </div>
                 :
-            <div style={{width:'70%', height:'100%'}} className="main-area">  
+            <div style={{width:'70%', height:'70vh'}} className="main-area">  
                 <div className='studentname'>
                 {stuList.map((stu) => {
                     return(

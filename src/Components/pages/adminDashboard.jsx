@@ -87,12 +87,13 @@ const AdminDashboard = () => {
         <div className='studentsContainerAS mx-auto' style={{paddingBottom:"20px"}}>
             <h3 style={{paddingTop:"20px", marginBottom:"20px"}}>Students</h3>
             
-                  <Table striped bordered hover size="sm" style={{width:"80%"}} className="mx-auto">
+                  <Table striped bordered hover size="sm" style={{width:"90%"}} className="mx-auto">
                   <thead>
                     <tr>
                       <th>No</th>
                       <th>Student Name</th>
                       <th>Phone</th>
+                      <th>Company</th>
                       <th>Location</th>
                       <th>AC Supervisor</th>
                       <th>FD Supervisor</th>
@@ -108,6 +109,7 @@ const AdminDashboard = () => {
                       <td style={{textAlign:"left"}}>{stu.name}</td>
                       <td><a href={"tel:" + stu.phone}>{stu.phone}</a></td>
                       <td>{stu.location}</td>
+                      <td>{stu.company}</td>
                       <td>{stu.supervisorName || <div style={{color:"red"}}>Not assigned</div>}</td>
                       <td>{stu.fdSupervisorName || <div style={{color:"red"}}>Not assigned</div>}</td>
                       <td><StudentModalAdm studentId={stu.creatorId}/></td>
@@ -127,7 +129,7 @@ const AdminDashboard = () => {
             return(
               <>
               
-                <div className='d-flex mt-2 justify-content-between'><div>{no++ +". "}{ancmt.announcement+" "}</div>{ancmt.creatorId === user.uid && <button style={{border:"none"}} onClick={()=>{deleteAnnouncement(ancmt.id)}}>&#128465;</button>}</div>
+                <div className='d-flex mt-2 justify-content-between'><div>{no++ +". "}{ancmt.announcement+" "}{" ~ "+ancmt.date+" "}</div>{ancmt.creatorId === user.uid && <button style={{border:"none"}} onClick={()=>{deleteAnnouncement(ancmt.id)}}>&#128465;</button>}</div>
               
               </>
             )

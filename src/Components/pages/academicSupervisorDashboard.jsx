@@ -148,6 +148,7 @@ const AcademicSupervisorDashboard = () => {
                       <th>No</th>
                       <th>Student Name</th>
                       <th>Phone</th>
+                      <th>Company</th>
                       <th>Location</th>
                       <th>Assessment Date</th>
                       <th>View Student</th>
@@ -162,6 +163,7 @@ const AcademicSupervisorDashboard = () => {
                       <td style={{textAlign:"left"}}>{stu.name}</td>
                       <td><a href={"tel:" + stu.phone}>{stu.phone}</a></td>
                       <td>{stu.location}</td>
+                      <td>{stu.company}</td>
                       <td>{stu.assessmentDate || "Not set"}</td>
                       <td><StudentModalAS studentId={stu.creatorId}/></td>
                     </tr>
@@ -180,7 +182,7 @@ const AcademicSupervisorDashboard = () => {
             return(
               <>
     
-                <div className='d-flex mt-2 justify-content-between'><div>{no++ +". "}{ancmt.announcement+" "}</div>{ancmt.creatorId === user.uid && <button style={{border:"none"}} onClick={()=>{deleteAnnouncement(ancmt.id)}}>&#128465;</button>}</div>
+                <div className='d-flex mt-2 justify-content-between'><div>{no++ +". "}{ancmt.announcement+" "}{" ~ "+ancmt.date+" "}</div>{ancmt.creatorId === user.uid && <button style={{border:"none"}} onClick={()=>{deleteAnnouncement(ancmt.id)}}>&#128465;</button>}</div>
     
               </>
              )

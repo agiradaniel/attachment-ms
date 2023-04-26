@@ -23,6 +23,7 @@ const FieldSupervisorDashboard = () => {
     let number = 1;
     const [isLoading, setIsLoading] = useState(true);
     const [modalStatus, setModalStatus] = useState(false);
+    let approval;
 
     useEffect(() => {
       if(!user || user.displayName !== "Field Supervisor" && user.displayName !== null){
@@ -102,46 +103,56 @@ const FieldSupervisorDashboard = () => {
         <>
         <div className='studentname'>
         {supervisorList.map((supervisor) => {
+          {supervisor.approval === true ? approval = true : approval = false}
                     return(
+                    <>
                     <h4 className='text-center'>{supervisor.name ? (supervisor.name + "'s Dashboard") : ("User Email: " + user.email)}</h4>
+                    
+                    </>
                     )
                     })}
         </div>
 
-        {supervisorList != "" ?
-        <div className='studentsContainer mx-auto'>
-            <h3 style={{paddingTop:"20px", marginBottom:"20px"}}>Students</h3>
-
-            <Table striped bordered hover size="sm" style={{width:"80%"}} className="mx-auto">
-                  <thead>
-                    <tr>
-                      <th>No</th>
-                      <th>Student Name</th>
-                      <th>Phone</th>
-                      <th>View Student</th>
-                    </tr>
-                  </thead>
-                    {stuList.map((stu) => {
-                return(  
-                  
-                  <tbody>
-                    <tr>
-                      <td>{number ++}</td>
-                      <td style={{textAlign:"left", paddingLeft:"10px"}}>{stu.name}</td>
-                      <td><a href={"tel:" + stu.phone}>{stu.phone}</a></td>
-                      <td><StudentModal studentId={stu.creatorId}/></td>
-                    </tr>
-                  </tbody>
-                
-                ) 
-            })
-        }
-        </Table>
-        
-        </div>: <div className='mx-auto text-center' style={{height:"660px"}}>
-                   <h3 style={{paddingTop:"150px"}}>Hi ,,, Update your details to proceed</h3>
-                    <SettingsModalFd handleAppear={modalStatus}/>
-                 </div>}
+        {supervisorList === "" ?
+        <div className='mx-auto text-center' style={{height:"660px"}}>
+        <h3 style={{paddingTop:"150px"}}>Hi ,,, Update your details to proceed</h3>
+         <SettingsModalFd handleAppear={modalStatus}/>
+        </div>
+              : 
+                approval === true ?
+                 <div className='studentsContainer mx-auto'>
+                 <h3 style={{paddingTop:"20px", marginBottom:"20px"}}>Students</h3>
+     
+                 <Table striped bordered hover size="sm" style={{width:"80%"}} className="mx-auto">
+                       <thead>
+                         <tr>
+                           <th>No</th>
+                           <th>Student Name</th>
+                           <th>Phone</th>
+                           <th>Assessment Date</th>
+                           <th>View Student</th>
+                         </tr>
+                       </thead>
+                         {stuList.map((stu) => {
+                     return(  
+                       
+                       <tbody>
+                         <tr>
+                           <td>{number ++}</td>
+                           <td style={{textAlign:"left", paddingLeft:"10px"}}>{stu.name}</td>
+                           <td><a href={"tel:" + stu.phone}>{stu.phone}</a></td>
+                           <td>{stu.assessmentDate || "Not set"}</td>
+                           <td><StudentModal studentId={stu.creatorId}/></td>
+                         </tr>
+                       </tbody>
+                     
+                     ) 
+                 })
+             }
+             </Table>
+             
+             </div>:<div className='studentsContainer mx-auto' style={{alignItems:"center", paddingTop:"170px"}}><h3>Account Awaiting Approval</h3></div>
+            }
 
         </>}
     

@@ -25,9 +25,9 @@ const Login = () => {
     }
     
     return(
-        <>
+        <div>
             
-            <div className='loginArea mx-auto'>
+            <div className='loginArea'>
                 <div className='text-white text-center loginImg' style={{backgroundImage: `url(${Image})`}} ><h1 className='mainH1'>SIGN IN</h1></div>
                 
                 <div className='container myForm'>
@@ -79,7 +79,7 @@ const Login = () => {
 
             </div>
             
-        </>
+        </div>
     );
 
 }

@@ -5,6 +5,7 @@ import { auth } from '../../firebase-config';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import SettingsModalFd from './settingsModalFd';
+import ApproveSupervisorModal from './approveFDModal';
 
 function AdmNavbar() {
 
@@ -19,12 +20,13 @@ function AdmNavbar() {
 
   return (
     <div style={{ display: 'flex', height: '550px', position: 'absolute'}}>
-      <Sidebar width="140px">
+      <Sidebar width="150px">
         <Menu>
           <MenuItem component={<Link to="/AdminDashboard"/>}> Dashboard</MenuItem>
           <MenuItem component={<Link to="/next"/>}> Reload</MenuItem>
+          <MenuItem><ApproveSupervisorModal/></MenuItem>
 
-          <MenuItem onClick={signUserOut} style={{marginTop:"390px"}}> Logout</MenuItem>
+          <MenuItem onClick={signUserOut} style={{marginTop:"340px"}}> Logout</MenuItem>
         </Menu>
       </Sidebar>
       <main>

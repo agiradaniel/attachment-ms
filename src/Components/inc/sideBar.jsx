@@ -5,6 +5,7 @@ import { auth } from '../../firebase-config';
 import { signOut } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import SettingsModal from './settingsModal';
+import SupervisorModal from './supervisorModal';
 
 function SideBarMenu() {
 
@@ -24,8 +25,9 @@ function SideBarMenu() {
           <MenuItem component={<Link to="/StudentDashboard"/>}> Dashboard</MenuItem>
           <MenuItem component={<Link to="/ELogbook"/>}> Logbook</MenuItem>
           <MenuItem component={<Link to="/Report"/>}> Report</MenuItem>
+          <MenuItem> <SupervisorModal/></MenuItem>
 
-          <MenuItem style={{marginTop:"290px"}}> <SettingsModal/> </MenuItem>
+          <MenuItem style={{marginTop:"250px"}}> <SettingsModal/> </MenuItem>
           <MenuItem onClick={signUserOut}> Logout</MenuItem>
         </Menu>
       </Sidebar>
