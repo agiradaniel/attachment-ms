@@ -113,7 +113,7 @@ const FieldSupervisorDashboard = () => {
                     })}
         </div>
 
-        {supervisorList === "" ?
+        {supervisorList == "" ?
         <div className='mx-auto text-center' style={{height:"660px"}}>
         <h3 style={{paddingTop:"150px"}}>Hi ,,, Update your details to proceed</h3>
          <SettingsModalFd handleAppear={modalStatus}/>
